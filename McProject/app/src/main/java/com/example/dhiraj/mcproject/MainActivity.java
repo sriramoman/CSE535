@@ -145,6 +145,7 @@ public class MainActivity extends Activity
                 // The registered callback will be called upon final directory selection.
                 directoryChooserDialog.chooseDirectory();
                 //m_newFolderEnabled = !m_newFolderEnabled;
+                startBtn.setEnabled(true);
             }
         });
     }

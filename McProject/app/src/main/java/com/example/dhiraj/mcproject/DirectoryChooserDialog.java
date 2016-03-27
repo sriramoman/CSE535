@@ -45,7 +45,15 @@ public class DirectoryChooserDialog
 
     public DirectoryChooserDialog(Context context, ChosenDirectoryListener chosenDirectoryListener)
     {
+
         m_context = context;
+        File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata");
+        if (!folder.exists()) {
+
+            folder.mkdir();
+            Toast.makeText(
+                    m_context, "new folder created mydata", Toast.LENGTH_SHORT).show();
+        }
         m_sdcardDirectory = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Mydata";
         m_chosenDirectoryListener = chosenDirectoryListener;
 

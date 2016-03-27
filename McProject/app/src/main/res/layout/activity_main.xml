@@ -16,7 +16,8 @@
         android:id="@+id/startBtn"
         android:layout_alignTop="@+id/stopBtn"
         android:layout_toLeftOf="@+id/hookBtn"
-        android:layout_toStartOf="@+id/hookBtn" />
+        android:layout_toStartOf="@+id/hookBtn"
+        android:enabled="false" />
 
     <Button
         android:layout_width="wrap_content"

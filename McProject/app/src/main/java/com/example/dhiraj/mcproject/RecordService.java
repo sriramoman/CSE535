@@ -86,16 +86,18 @@ public class RecordService extends Service implements LocationListener {
     private void startRecording(String mFileName) {
         /*mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileName += "/audiorecordtest1.3gp";*/
-        Location startLocation = getLocation();
+/*        Location startLocation = getLocation();
         latitudeStart = startLocation.getLatitude();
         longitudeStart = startLocation.getLongitude();
         cityStart = getLocationName(latitudeStart, longitudeStart);
         dataGps.add(cityStart);
+        Log.e(LOG_TAG, cityStart);
+        */
 
         Date dateStart = new Date();
         String timestampStart = dateStart.toString();
         Log.e(LOG_TAG,timestampStart );
-        Log.e(LOG_TAG, cityStart);
+
         System.out.print(mFileName);
         Log.e(LOG_TAG, mFileName);
         //Calendar.get(Calendar.DATE);
@@ -116,12 +118,14 @@ public class RecordService extends Service implements LocationListener {
 
     }
     private void stopRecording() {
-        Location startLocation = getLocation();
+ /*       Location startLocation = getLocation();
         latitudeEnd = startLocation.getLatitude();
         longitudeEnd = startLocation.getLongitude();
         cityEnd = getLocationName(latitudeEnd, longitudeEnd);
         dataGps.add(cityEnd);
         Log.e(LOG_TAG, cityEnd);
+        */
+
         mRecorder.stop();
         mRecorder.release();
         Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
