@@ -74,4 +74,15 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+    <ProgressBar
+        android:id="@+id/progressbar_level"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="1728dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.13"
+        android:layout_below="@+id/startBtn"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:max="32676" />
+
 </RelativeLayout>

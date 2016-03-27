@@ -2,24 +2,29 @@ package com.example.dhiraj.mcproject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.location.LocationManager;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.provider.Settings;
 
 import android.os.Bundle;
 
+import android.util.Log;
 import android.widget.Button;
 import android.view.View;
 
 import android.content.Context;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +33,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class MainActivity extends Activity
@@ -50,6 +56,13 @@ public class MainActivity extends Activity
     /** Flag indicating whether we have called bind on the service. */
     boolean mBound;
     private String hookString = "";
+
+    //<editor-fold desc="svellangGraph">
+    MyReceiver myReceiver;
+    private ProgressBar level;
+    private HashMap<Number,Number> mapLevels;
+    private String ampList;
+    //</editor-fold>
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -61,7 +74,18 @@ public class MainActivity extends Activity
             showSettingsAlert();
         }
         setContentView(R.layout.activity_main);
+        //<editor-fold desc="svellangGraph">
+        level = (ProgressBar) findViewById(R.id.progressbar_level);
+        level.setProgress(500);
+        mapLevels=new HashMap<>();
         Intent serviceIntent;
+        //</editor-fold>
+
+        myReceiver = new MyReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(RecordService.RecordServiceAmplitude);
+        registerReceiver(myReceiver, intentFilter);
+
         serviceIntent = new Intent(MainActivity.this.getBaseContext(), RecordService.class);
         startService(serviceIntent);
         bindService(serviceIntent, mConnection,
@@ -201,6 +225,11 @@ public class MainActivity extends Activity
             e.printStackTrace();
         }
         saveHooks();
+
+        //<editor-fold desc="svellangGraph">
+        ampList = mapLevels.toString().replaceAll(", ","\n").replaceAll("=",":").replaceAll("\\{","").replaceAll("\\}","");
+        mapLevels.clear();
+        //</editor-fold>
     }
 
 
@@ -237,7 +266,7 @@ public class MainActivity extends Activity
         Toast.makeText(
                 MainActivity.this, "Chosen directory + file: " +
                         m_chosenDir + hookString, Toast.LENGTH_LONG).show();
-        String s = hookTime + " : " + hookedText.getText().toString();
+        String s = hookTime + ":" + hookedText.getText().toString();
         hooks.add(s);
         Toast.makeText(getBaseContext(),
                 "Hooked it",
@@ -247,7 +276,7 @@ public class MainActivity extends Activity
     }
     private void saveHooks() {
         try {
-            File myFile = new File(m_chosenDir + File.separator+ hookString +".txt");
+            File myFile = new File(m_chosenDir + File.separator+ hookString +"$.txt");
             myFile.createNewFile();
             FileOutputStream fOut = new FileOutputStream(myFile);
             OutputStreamWriter myOutWriter =
@@ -255,9 +284,22 @@ public class MainActivity extends Activity
             for (String s : hooks){
                 myOutWriter.append(s + "\n");
             }
-
             myOutWriter.close();
             fOut.close();
+
+            //<editor-fold desc="svellangGraph">
+            myFile = new File(m_chosenDir + File.separator+ hookString +"~.txt");
+            myFile.createNewFile();
+            fOut = new FileOutputStream(myFile);
+            myOutWriter =
+                    new OutputStreamWriter(fOut);
+            Log.d("Time", ampList);
+            myOutWriter.append(ampList);
+            myOutWriter.close();
+            fOut.close();
+            //</editor-fold>
+
+
             Toast.makeText(getBaseContext(),
                     "Done writing SD 'mysdfile.txt'",
                     Toast.LENGTH_SHORT).show();
@@ -344,4 +386,17 @@ public class MainActivity extends Activity
 
         }
     }*/
+
+    //<editor-fold desc="svellangGraph">
+    private class MyReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context arg0, Intent arg1) {
+            // TODO Auto-generated method stub
+            int datapassed = arg1.getIntExtra("RECORD_SERVICE_AMPLITUDE", 0);
+            level.setProgress(datapassed);
+            mapLevels.put(SystemClock.currentThreadTimeMillis(), datapassed);
+        }
+    }
+    //</editor-fold>
 }

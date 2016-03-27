@@ -2,7 +2,6 @@ package com.example.dhiraj.mcproject;
 
 import android.Manifest;
 import android.app.Service;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -10,27 +9,23 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.speech.RecognizerIntent;
+import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
-import static android.support.v4.app.ActivityCompat.startActivityForResult;
 
 public class RecordService extends Service implements LocationListener {
     LocationManager locationManager;
@@ -61,6 +56,11 @@ public class RecordService extends Service implements LocationListener {
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
     private MediaRecorder mRecorder = null;
     private static final String LOG_TAG = "AudioRecordTestt";
+    //<editor-fold desc="svellangGraph">
+//    private int lastLevel = 0;
+    private Handler handler = new Handler();
+    final static String RecordServiceAmplitude = "RecordServiceAmplitude";
+    //</editor-fold>
     class IncomingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -107,6 +107,21 @@ public class RecordService extends Service implements LocationListener {
         mRecorder.setOutputFile(mFileName);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
+        //<editor-fold desc="svellangGraph">
+//        Thread thread = new Thread(new Runnable() {
+//            public void run() {
+//                readAudioBuffer();
+//            }
+//        });
+
+//        thread.setPriority(Thread.currentThread().getThreadGroup().getMaxPriority());
+//
+//        thread.start();
+
+        handler.removeCallbacks(update);
+        handler.postDelayed(update, 25);
+        //</editor-fold>
+
         try {
             mRecorder.prepare();
         } catch (IOException e) {
@@ -126,10 +141,14 @@ public class RecordService extends Service implements LocationListener {
         Log.e(LOG_TAG, cityEnd);
         */
 
+
+        handler.removeCallbacks(update);
         mRecorder.stop();
         mRecorder.release();
         Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
         mRecorder = null;
+
+
     }
 
 
@@ -148,7 +167,7 @@ public class RecordService extends Service implements LocationListener {
     }
 
 
-    //Locations
+    //<editor-fold desc="Locations">
     public Location getLocation() {
         try {
             locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
@@ -248,6 +267,7 @@ public class RecordService extends Service implements LocationListener {
     public void onLocationChanged(Location location) {
 
     }
+    //</editor-fold>
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -264,4 +284,15 @@ public class RecordService extends Service implements LocationListener {
 
     }
 
+    //<editor-fold desc="svellangGraph">
+    private Runnable update = new Runnable() {
+        public void run() {
+            Intent intent = new Intent();
+            intent.setAction(RecordServiceAmplitude);
+            intent.putExtra("RECORD_SERVICE_AMPLITUDE", mRecorder.getMaxAmplitude());
+            sendBroadcast(intent);
+            handler.postAtTime(this, SystemClock.uptimeMillis() + 100);
+        }
+    };
+    //</editor-fold>
 }
