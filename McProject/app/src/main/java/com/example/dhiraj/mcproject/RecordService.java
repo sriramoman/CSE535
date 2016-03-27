@@ -1,9 +1,15 @@
 package com.example.dhiraj.mcproject;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -11,6 +17,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -20,6 +27,7 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,11 +45,16 @@ public class RecordService extends Service implements LocationListener {
     private static String mFileName = null;
     // flag for GPS status
     boolean canGetLocation = false;
+    SQLiteDatabase db;
+    public float startTimeHrs;
+    public static final String DATABASE_NAME = "svellangDatabase";
+    public static final String DATABASE_LOCATION = Environment.getExternalStorageDirectory() + File.separator + "Mydata" + File.separator + DATABASE_NAME;
+    public static String TABLE = "Recording";
 
     Location location; // location
     double latitude; // latitude
     double longitude; // longitude
-
+    public static int recordingOn = 0;
 
     double latitudeStart; // latitude
     double longitudeStart; // longitude
@@ -51,7 +64,7 @@ public class RecordService extends Service implements LocationListener {
     String cityEnd;
     // The minimum distance to change Updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
-
+    Notification recordingNotify;
     // The minimum time between updates in milliseconds
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
     private MediaRecorder mRecorder = null;
@@ -84,16 +97,16 @@ public class RecordService extends Service implements LocationListener {
     }
 
     private void startRecording(String mFileName) {
+        if (isGPSEnabled) {
+            Location startLocation = getLocation();
+            latitudeStart = startLocation.getLatitude();
+            longitudeStart = startLocation.getLongitude();
+            cityStart = getLocationName(latitudeStart, longitudeStart);
+            dataGps.add(cityStart);
+            Log.e(LOG_TAG, cityStart);
+        }
         /*mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileName += "/audiorecordtest1.3gp";*/
-/*        Location startLocation = getLocation();
-        latitudeStart = startLocation.getLatitude();
-        longitudeStart = startLocation.getLongitude();
-        cityStart = getLocationName(latitudeStart, longitudeStart);
-        dataGps.add(cityStart);
-        Log.e(LOG_TAG, cityStart);
-        */
-
         Date dateStart = new Date();
         String timestampStart = dateStart.toString();
         Log.e(LOG_TAG,timestampStart );
@@ -127,19 +140,22 @@ public class RecordService extends Service implements LocationListener {
         } catch (IOException e) {
             Log.e(LOG_TAG, "prepare() failed");
         }
-
+        recordingOn = 1;
+        createNotification();
         mRecorder.start();
+
         //promptSpeechInput();
 
     }
     private void stopRecording() {
- /*       Location startLocation = getLocation();
-        latitudeEnd = startLocation.getLatitude();
-        longitudeEnd = startLocation.getLongitude();
-        cityEnd = getLocationName(latitudeEnd, longitudeEnd);
-        dataGps.add(cityEnd);
-        Log.e(LOG_TAG, cityEnd);
-        */
+        if (isGPSEnabled) {
+            Location startLocation = getLocation();
+            latitudeEnd = startLocation.getLatitude();
+            longitudeEnd = startLocation.getLongitude();
+            cityEnd = getLocationName(latitudeEnd, longitudeEnd);
+            dataGps.add(cityEnd);
+            Log.e(LOG_TAG, cityEnd);
+        }
 
 
         handler.removeCallbacks(update);
@@ -147,7 +163,9 @@ public class RecordService extends Service implements LocationListener {
         mRecorder.release();
         Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
         mRecorder = null;
-
+        recordingOn = 0;
+        NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancel(123);
 
     }
 
@@ -162,7 +180,7 @@ public class RecordService extends Service implements LocationListener {
 
     @Override
     public void onCreate() {
-
+        createDB();
         super.onCreate();
     }
 
@@ -294,5 +312,65 @@ public class RecordService extends Service implements LocationListener {
             handler.postAtTime(this, SystemClock.uptimeMillis() + 100);
         }
     };
+
+    private void createDB(){
+        try {
+            db = SQLiteDatabase.openOrCreateDatabase(DATABASE_LOCATION, null);
+            //db = SQLiteDatabase.openOrCreateDatabase(Environment.getExternalStorageDirectory()+"/mydb",null);
+            db.beginTransaction();
+            try {
+                //perform your database operations here ...
+                db.execSQL("create table " + TABLE + " ("
+                        + " created_at DATETIME DEFAULT CURRENT_TIMESTAMP, "
+                        + " City Text, "
+                        + " Time float" +
+                        " ); ");
+
+                db.setTransactionSuccessful(); //commit your changes
+                Toast.makeText(this, "db and table created", Toast.LENGTH_LONG).show();
+            } catch (SQLiteException e) {
+                //report problem
+            } finally {
+                db.endTransaction();
+            }
+        } catch (SQLException e) {
+
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+    }
+    private void insertRecord(){
+
+        try {
+            //perform your database operations here ...
+            db.execSQL("insert into " + TABLE + " (City,Time) values ('" + cityStart + "', '" + startTimeHrs + "' );");
+            //db.setTransactionSuccessful(); //commit your changes
+        } catch (SQLiteException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        } finally {
+            //db.endTransaction();
+        }
+
+    }
+    public void createNotification() {
+        // Prepare intent which is triggered if the
+        // notification is selected
+        System.out.print("inside notidication class");
+        Toast.makeText(this, "I am notifiying seeeeeeee", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pIntent = PendingIntent.getActivity(this,0,intent,0);
+
+        // Build notification
+        // Actions are just fake
+        recordingNotify = new Notification.Builder(this)
+                .setContentTitle("New mail from " + "test@gmail.com")
+                .setContentText("Recording on")
+                .setContentIntent(pIntent)
+                .setSmallIcon(R.drawable.ic)
+                .build();
+        NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(123, recordingNotify);
+
+    }
     //</editor-fold>
 }

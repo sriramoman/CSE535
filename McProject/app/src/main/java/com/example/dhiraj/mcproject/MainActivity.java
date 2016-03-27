@@ -1,6 +1,7 @@
 package com.example.dhiraj.mcproject;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -66,12 +67,13 @@ public class MainActivity extends Activity
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
         if (!isGPSEnabled) {
-            showSettingsAlert();
+            //showSettingsAlert();
         }
         setContentView(R.layout.activity_main);
         //<editor-fold desc="svellangGraph">
@@ -85,15 +87,22 @@ public class MainActivity extends Activity
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(RecordService.RecordServiceAmplitude);
         registerReceiver(myReceiver, intentFilter);
-
         serviceIntent = new Intent(MainActivity.this.getBaseContext(), RecordService.class);
         startService(serviceIntent);
-        bindService(serviceIntent, mConnection,
-                Context.BIND_AUTO_CREATE);
+        bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
         hookedText =(EditText) findViewById(R.id.hookedText);
         voiceToText = (TextView) findViewById(R.id.textFromSpeech);
         final Button startBtn = (Button) findViewById(R.id.startBtn);
         final Button stopBtn = (Button) findViewById(R.id.stopBtn);
+        if (isMyServiceRunning(RecordService.class))
+        {
+            Toast.makeText(getBaseContext(),"Service is running",Toast.LENGTH_SHORT).show();
+            if(RecordService.recordingOn == 1) {
+
+                startBtn.setEnabled(false);
+                stopBtn.setEnabled(true);
+            }
+        }
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,6 +201,15 @@ public class MainActivity extends Activity
             mBound = false;
         }
     };
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void startRecord(View v) {
         if (!mBound) return;
