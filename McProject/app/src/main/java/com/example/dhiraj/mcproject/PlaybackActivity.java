@@ -47,7 +47,7 @@ public class PlaybackActivity extends AppCompatActivity {
                         else {
                             //warning will crash if u resume.
                             try {
-                                final Uri myUri = Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata/test1/player.mp3");
+                                final Uri myUri = Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata/test1/ghj.3gp");
                                 mediaPlayer.setDataSource(getApplicationContext(), myUri);
                                 mediaPlayer.prepareAsync();
                             } catch (IOException e) {

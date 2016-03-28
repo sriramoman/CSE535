@@ -108,6 +108,7 @@ public class MainActivity extends Activity
             public void onClick(View v) {
                 hookedText.setText("");
                 startBtn.setEnabled(false);
+                starttime = System.currentTimeMillis();
                 startRecord(v);
                 stopBtn.setEnabled(true);
                 //promptSpeechInput();
@@ -117,7 +118,6 @@ public class MainActivity extends Activity
             @Override
             public void onClick(View v) {
                 startBtn.setEnabled(true);
-                starttime = System.currentTimeMillis();
                 stopRecord(v);
                 stopBtn.setEnabled(false);
             }
@@ -129,6 +129,7 @@ public class MainActivity extends Activity
                 if(hookOn == 0)
                 {
                     hookTime =  System.currentTimeMillis() - starttime ;
+                    Log.d("Hook",String.valueOf(hookTime));
                     hookedText.setEnabled(true);
                     hookedText.requestFocus();
                     hookBtn.setText("Save");
@@ -244,10 +245,7 @@ public class MainActivity extends Activity
         }
         saveHooks();
 
-        //<editor-fold desc="svellangGraph">
-        ampList = mapLevels.toString().replaceAll(", ","\n").replaceAll("=",":").replaceAll("\\{","").replaceAll("\\}","");
-        mapLevels.clear();
-        //</editor-fold>
+
     }
 
 
@@ -306,6 +304,7 @@ public class MainActivity extends Activity
             fOut.close();
 
             //<editor-fold desc="svellangGraph">
+            ampList = mapLevels.toString().replaceAll(", ","\n").replaceAll("=",":").replaceAll("\\{","").replaceAll("\\}","");
             myFile = new File(m_chosenDir + File.separator+ hookString +"~.txt");
             myFile.createNewFile();
             fOut = new FileOutputStream(myFile);
@@ -315,6 +314,7 @@ public class MainActivity extends Activity
             myOutWriter.append(ampList);
             myOutWriter.close();
             fOut.close();
+            mapLevels.clear();
             //</editor-fold>
 
 
@@ -413,7 +413,9 @@ public class MainActivity extends Activity
             // TODO Auto-generated method stub
             int datapassed = arg1.getIntExtra("RECORD_SERVICE_AMPLITUDE", 0);
             level.setProgress(datapassed);
-            mapLevels.put(SystemClock.currentThreadTimeMillis(), datapassed);
+            long timeNow=System.currentTimeMillis() - starttime;
+            Log.d("Receiver",String.valueOf(timeNow));
+            mapLevels.put(timeNow, datapassed);
         }
     }
     //</editor-fold>
