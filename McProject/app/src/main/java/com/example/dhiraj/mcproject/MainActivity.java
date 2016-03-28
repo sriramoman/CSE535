@@ -34,7 +34,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 
 public class MainActivity extends Activity
@@ -61,7 +61,7 @@ public class MainActivity extends Activity
     //<editor-fold desc="svellangGraph">
     MyReceiver myReceiver;
     private ProgressBar level;
-    private HashMap<Number,Number> mapLevels;
+    private LinkedHashMap<Number,Number> mapLevels;
     private String ampList;
     //</editor-fold>
     @Override
@@ -79,7 +79,7 @@ public class MainActivity extends Activity
         //<editor-fold desc="svellangGraph">
         level = (ProgressBar) findViewById(R.id.progressbar_level);
         level.setProgress(500);
-        mapLevels=new HashMap<>();
+        mapLevels=new LinkedHashMap<>();
         Intent serviceIntent;
         //</editor-fold>
 
