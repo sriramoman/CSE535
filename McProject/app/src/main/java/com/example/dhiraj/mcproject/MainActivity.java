@@ -128,7 +128,8 @@ public class MainActivity extends Activity
             public void onClick(View v) {
                 if(hookOn == 0)
                 {
-                    hookTime =  System.currentTimeMillis() - starttime ;
+                    hookTime =  System.currentTimeMillis();
+                    sendHooktime(hookTime);
                     Log.d("Hook",String.valueOf(hookTime));
                     hookedText.setEnabled(true);
                     hookedText.requestFocus();
@@ -215,7 +216,7 @@ public class MainActivity extends Activity
     public void startRecord(View v) {
         if (!mBound) return;
         Bundle b = new Bundle();
-        String filePath = m_chosenDir + File.separator + hookString + ".3gp" ;
+        String filePath = m_chosenDir + File.separator + hookString;
         b.putString("str1", filePath);
         Message msg = Message.obtain(null, 1);
         msg.setData(b);
@@ -243,7 +244,7 @@ public class MainActivity extends Activity
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        saveHooks();
+        //saveHooks();
 
 
     }
@@ -284,12 +285,47 @@ public class MainActivity extends Activity
                         m_chosenDir + hookString, Toast.LENGTH_LONG).show();
         String s = hookTime + ":" + hookedText.getText().toString();
         hooks.add(s);
-        Toast.makeText(getBaseContext(),
-                "Hooked it",
-                Toast.LENGTH_SHORT).show();
+        // change this to sending to servce via mpi
+        sendHooks(hookedText.getText().toString());
+        Toast.makeText(getBaseContext(), "Hooked it",Toast.LENGTH_SHORT).show();
         hookedText.setText("");
+    }
+
+    private void sendHooks(String s) {
+        if (!mBound) return;
+        Bundle b = new Bundle();
+        b.putString("str1", s);
+        Message msg = Message.obtain(null, 3);
+        msg.setData(b);
+        //msg.replyTo = mMessenger;
+
+        // Create and send a message to the service, using a supported 'what' value
+        //Message msg = Message.obtain(null, MessengerService.MSG_SAY_HELLO, 0, 0);
+        try {
+            mService.send(msg);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
     }
+    private void sendHooktime(long t) {
+        if (!mBound) return;
+        Bundle b = new Bundle();
+        b.putLong("str1",t);
+        Message msg = Message.obtain(null, 4);
+        msg.setData(b);
+        //msg.replyTo = mMessenger;
+
+        // Create and send a message to the service, using a supported 'what' value
+        //Message msg = Message.obtain(null, MessengerService.MSG_SAY_HELLO, 0, 0);
+        try {
+            mService.send(msg);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private void saveHooks() {
         try {
             File myFile = new File(m_chosenDir + File.separator+ hookString +"$.txt");
@@ -414,7 +450,7 @@ public class MainActivity extends Activity
             int datapassed = arg1.getIntExtra("RECORD_SERVICE_AMPLITUDE", 0);
             level.setProgress(datapassed);
             long timeNow=System.currentTimeMillis() - starttime;
-            Log.d("Receiver",String.valueOf(timeNow));
+            Log.d("Receiver", String.valueOf(timeNow));
             mapLevels.put(timeNow, datapassed);
         }
     }

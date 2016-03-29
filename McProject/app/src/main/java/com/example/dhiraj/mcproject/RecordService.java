@@ -28,7 +28,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,6 +42,7 @@ public class RecordService extends Service implements LocationListener {
     // flag for GPS status
     boolean isGPSEnabled = false;
     private ArrayList<String> dataGps = new ArrayList<String>();
+    private ArrayList <String> hooks = new ArrayList<String>();
     // flag for network status
     boolean isNetworkEnabled = false;
     private static String mFileName = null;
@@ -50,12 +53,12 @@ public class RecordService extends Service implements LocationListener {
     public static final String DATABASE_NAME = "svellangDatabase";
     public static final String DATABASE_LOCATION = Environment.getExternalStorageDirectory() + File.separator + "Mydata" + File.separator + DATABASE_NAME;
     public static String TABLE = "Recording";
-
+    long starttime = 0;
     Location location; // location
     double latitude; // latitude
     double longitude; // longitude
     public static int recordingOn = 0;
-
+    public long hookTime;
     double latitudeStart; // latitude
     double longitudeStart; // longitude
     String cityStart;
@@ -73,6 +76,7 @@ public class RecordService extends Service implements LocationListener {
 //    private int lastLevel = 0;
     private Handler handler = new Handler();
     final static String RecordServiceAmplitude = "RecordServiceAmplitude";
+    String filename;
     //</editor-fold>
     class IncomingHandler extends Handler {
         @Override
@@ -80,6 +84,7 @@ public class RecordService extends Service implements LocationListener {
             switch (msg.what) {
                 case 1:
                     String s = msg.getData().getString("str1");
+                    filename = s;
                     Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
                     startRecording(s);
                     //startRecord(msg);
@@ -88,13 +93,58 @@ public class RecordService extends Service implements LocationListener {
                     String st = msg.getData().getString("str1");
                     Toast.makeText(getApplicationContext(), st, Toast.LENGTH_SHORT).show();
                     stopRecording();
-                    //startRecord(msg);
+                    saveHooks();
                     break;
+                case 3:
+                    String h = msg.getData().getString("str1");
+                    Toast.makeText(getApplicationContext(),"hooked text" + h, Toast.LENGTH_SHORT).show();
+                    String hookst = hookTime + ":" + h;
+                    hooks.add(hookst);
+                case 4:
+                    hookTime = msg.getData().getLong("str1") - starttime;
                 default:
                     super.handleMessage(msg);
             }
         }
     }
+    private void saveHooks() {
+        try {
+            File myFile = new File(filename +"$.txt");
+            myFile.createNewFile();
+            FileOutputStream fOut = new FileOutputStream(myFile);
+            OutputStreamWriter myOutWriter =
+                    new OutputStreamWriter(fOut);
+            for (String s : hooks){
+                myOutWriter.append(s + "\n");
+            }
+            myOutWriter.close();
+            hooks.clear();
+            fOut.close();
+
+/*            //<editor-fold desc="svellangGraph">
+            ampList = mapLevels.toString().replaceAll(", ","\n").replaceAll("=",":").replaceAll("\\{","").replaceAll("\\}","");
+            myFile = new File(m_chosenDir + File.separator+ hookString +"~.txt");
+            myFile.createNewFile();
+            fOut = new FileOutputStream(myFile);
+            myOutWriter =
+                    new OutputStreamWriter(fOut);
+            Log.d("Time", ampList);
+            myOutWriter.append(ampList);
+            myOutWriter.close();
+            fOut.close();
+            mapLevels.clear();
+            //</editor-fold>
+
+
+            Toast.makeText(getBaseContext(),
+                    "Done writing SD 'mysdfile.txt'",
+                    Toast.LENGTH_SHORT).show();*/
+        } catch (Exception e) {
+            Toast.makeText(getBaseContext(), e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void startRecording(String mFileName) {
         if (isGPSEnabled) {
@@ -117,7 +167,7 @@ public class RecordService extends Service implements LocationListener {
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setOutputFile(mFileName);
+        mRecorder.setOutputFile(mFileName + ".3gp");
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
         //<editor-fold desc="svellangGraph">
@@ -142,6 +192,7 @@ public class RecordService extends Service implements LocationListener {
         }
         recordingOn = 1;
         createNotification();
+        starttime = System.currentTimeMillis();
         mRecorder.start();
 
         //promptSpeechInput();
