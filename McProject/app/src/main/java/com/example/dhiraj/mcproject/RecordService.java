@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -221,6 +222,7 @@ public class RecordService extends Service implements LocationListener {
         recordingOn = 0;
         NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         notificationManager.cancel(123);
+        checkMobility();
 
     }
 
@@ -229,14 +231,12 @@ public class RecordService extends Service implements LocationListener {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(starttime);
-
-        int mYear = calendar.get(Calendar.YEAR);
-        int mMonth = calendar.get(Calendar.MONTH);
-        int mDay = calendar.get(Calendar.DAY_OF_MONTH);
         Date time = calendar.getTime();
-        int hrs = time.getHours();
-        int min = time.getMinutes();
-        float hrmins = hrs + min/100;
+        float hrs = time.getHours();
+        float min = time.getMinutes();
+        float hrmins = hrs + (min/100);
+        String t = " " + min/100 + " " + hrmins;
+        Log.e(LOG_TAG, t);
         return hrmins;
     }
 
@@ -448,6 +448,28 @@ public class RecordService extends Service implements LocationListener {
                 .build();
         NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(123, recordingNotify);
+
+    }
+    public void checkMobility(){
+        long currentTime = System.currentTimeMillis();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(currentTime);
+        Date time = calendar.getTime();
+        float hrs = time.getHours();
+        float min = time.getMinutes();
+        float hrmins = hrs + (min/100);
+        String t = " " + min/100 + " " + hrmins;
+        Log.e(LOG_TAG, t);
+        float endhrsmins = hrmins + .15f;
+        String query = "Select count(*) from Recording where "+
+                "Time >= " + hrmins + " and Time < " + endhrsmins;
+        //db.execSQL(query);
+        Cursor mCount = db.rawQuery(query,null);
+        mCount.moveToFirst();
+        int count= mCount.getInt(0);
+        mCount.close();
+        db.close();
+        Log.e(LOG_TAG," "+count);
 
     }
     //</editor-fold>
