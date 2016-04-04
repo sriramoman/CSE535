@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +66,7 @@ public class RecordService extends Service implements LocationListener {
     double longitudeEnd; // longitude
     double latitudeEnd; // latitude
     String cityEnd;
+    private String finalFileName;
     // The minimum distance to change Updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
     Notification recordingNotify;
@@ -159,7 +161,7 @@ public class RecordService extends Service implements LocationListener {
         mFileName += "/audiorecordtest1.3gp";*/
         Date dateStart = new Date();
         String timestampStart = dateStart.toString();
-        Log.e(LOG_TAG,timestampStart );
+        Log.e(LOG_TAG, timestampStart);
 
         System.out.print(mFileName);
         Log.e(LOG_TAG, mFileName);
@@ -169,7 +171,7 @@ public class RecordService extends Service implements LocationListener {
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mRecorder.setOutputFile(mFileName + ".3gp");
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
+        finalFileName = mFileName;
         //<editor-fold desc="svellangGraph">
 //        Thread thread = new Thread(new Runnable() {
 //            public void run() {
@@ -212,12 +214,30 @@ public class RecordService extends Service implements LocationListener {
         handler.removeCallbacks(update);
         mRecorder.stop();
         mRecorder.release();
+
+        insertRecord(cityStart, cityEnd, finalFileName, getstart(starttime));
         Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
         mRecorder = null;
         recordingOn = 0;
         NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         notificationManager.cancel(123);
 
+    }
+
+    private float getstart(long starttime) {
+
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(starttime);
+
+        int mYear = calendar.get(Calendar.YEAR);
+        int mMonth = calendar.get(Calendar.MONTH);
+        int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+        Date time = calendar.getTime();
+        int hrs = time.getHours();
+        int min = time.getMinutes();
+        float hrmins = hrs + min/100;
+        return hrmins;
     }
 
 
@@ -373,7 +393,9 @@ public class RecordService extends Service implements LocationListener {
                 //perform your database operations here ...
                 db.execSQL("create table " + TABLE + " ("
                         + " created_at DATETIME DEFAULT CURRENT_TIMESTAMP, "
-                        + " City Text, "
+                        + " Filename Text, "
+                        + " StartCity Text, "
+                        + " EndCity Text, "
                         + " Time float" +
                         " ); ");
 
@@ -390,11 +412,16 @@ public class RecordService extends Service implements LocationListener {
         }
 
     }
-    private void insertRecord(){
+    private void insertRecord(String cityStart, String cityEnd, String finalFileName, float starttime){
 
         try {
             //perform your database operations here ...
-            db.execSQL("insert into " + TABLE + " (City,Time) values ('" + cityStart + "', '" + startTimeHrs + "' );");
+            db.execSQL("insert into " + TABLE + " (Filename,StartCity,EndCity,Time) values " +
+                    "('" + finalFileName
+                    + "', '" + cityStart
+                    + "', '" + cityEnd
+                    + "', '" + starttime
+                    + "' );");
             //db.setTransactionSuccessful(); //commit your changes
         } catch (SQLiteException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -414,7 +441,7 @@ public class RecordService extends Service implements LocationListener {
         // Build notification
         // Actions are just fake
         recordingNotify = new Notification.Builder(this)
-                .setContentTitle("New mail from " + "test@gmail.com")
+                .setContentTitle("Intelligent recorder ")
                 .setContentText("Recording on")
                 .setContentIntent(pIntent)
                 .setSmallIcon(R.drawable.ic)
