@@ -2,7 +2,11 @@ package com.example.dhiraj.mcproject;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.DialogInterface;
@@ -19,6 +23,7 @@ import android.provider.Settings;
 
 import android.os.Bundle;
 
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Button;
 import android.view.View;
@@ -35,6 +40,8 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MainActivity extends Activity
@@ -67,7 +74,7 @@ public class MainActivity extends Activity
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
+        //startAlarm();
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -454,5 +461,18 @@ public class MainActivity extends Activity
             mapLevels.put(timeNow, datapassed);
         }
     }
+
+    public void startAlarm() {
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
+        long whenFirst = System.currentTimeMillis();         // notification time
+        Toast.makeText(getBaseContext(), "Alaram Starting now get ready",
+                Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this, NotifyUser.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);
+        alarmManager.setRepeating(AlarmManager.RTC, whenFirst, 60 * 1000, pendingIntent);
+    }
     //</editor-fold>
+
+
+
 }

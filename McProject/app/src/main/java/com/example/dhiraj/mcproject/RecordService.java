@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -25,6 +26,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -38,6 +40,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class RecordService extends Service implements LocationListener {
     LocationManager locationManager;
@@ -252,6 +256,11 @@ public class RecordService extends Service implements LocationListener {
     @Override
     public void onCreate() {
         createDB();
+
+        MyTimerTask myTask = new MyTimerTask();
+        Timer myTimer = new Timer();
+
+        myTimer.schedule(myTask, 0, 60*15000);
         super.onCreate();
     }
 
@@ -464,13 +473,51 @@ public class RecordService extends Service implements LocationListener {
         String query = "Select count(*) from Recording where "+
                 "Time >= " + hrmins + " and Time < " + endhrsmins;
         //db.execSQL(query);
-        Cursor mCount = db.rawQuery(query,null);
+        Cursor mCount = db.rawQuery(query, null);
+
         mCount.moveToFirst();
         int count= mCount.getInt(0);
         mCount.close();
-        db.close();
-        Log.e(LOG_TAG," "+count);
+        //db.close();
+        Log.e(LOG_TAG, " the count is " + count);
+        //Toast.makeText(this, "Checking if we want to notify" + count,Toast.LENGTH_LONG).show();
+        if (count >=1){
+            generateNotification(getApplicationContext(), "Wanna Start Recording" + count);
+        }
 
     }
     //</editor-fold>
+    class MyTimerTask extends TimerTask {
+        public void run() {
+            checkMobility();
+        }
+    }
+
+    private void generateNotification(Context context, String message) {
+
+        int icon = R.drawable.ic;
+        long when = System.currentTimeMillis();
+        String appname = context.getResources().getString(R.string.app_name);
+        NotificationManager notificationManager = (NotificationManager) context
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        Notification notification;
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
+                new Intent(context, MainActivity.class), 0);
+
+        // To support 2.3 os, we use "Notification" class and 3.0+ os will use
+        // "NotificationCompat.Builder" class.
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                context);
+        notification = builder.setContentIntent(contentIntent)
+                .setSmallIcon(icon).setTicker(appname).setWhen(0)
+                .setAutoCancel(true).setContentTitle(appname)
+                .setContentText(message).build();
+
+        notificationManager.notify((int) when, notification);
+
+
+
+    }
 }
