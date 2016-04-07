@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.location.LocationManager;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
@@ -75,6 +76,10 @@ public class MainActivity extends Activity
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         //startAlarm();
+        File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata");
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);

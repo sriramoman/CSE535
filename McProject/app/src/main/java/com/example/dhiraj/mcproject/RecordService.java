@@ -154,6 +154,8 @@ public class RecordService extends Service implements LocationListener {
 
 
     private void startRecording(String mFileName) {
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         if (isGPSEnabled) {
             Location startLocation = getLocation();
             latitudeStart = startLocation.getLatitude();
@@ -206,6 +208,8 @@ public class RecordService extends Service implements LocationListener {
 
     }
     private void stopRecording() {
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         if (isGPSEnabled) {
             Location startLocation = getLocation();
             latitudeEnd = startLocation.getLatitude();
@@ -481,7 +485,7 @@ public class RecordService extends Service implements LocationListener {
         //db.close();
         Log.e(LOG_TAG, " the count is " + count);
         //Toast.makeText(this, "Checking if we want to notify" + count,Toast.LENGTH_LONG).show();
-        if (count >=1){
+        if (count >=3){
             generateNotification(getApplicationContext(), "Wanna Start Recording" + count);
         }
 
