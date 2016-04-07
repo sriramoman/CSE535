@@ -28,6 +28,7 @@ import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.File;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -49,6 +51,9 @@ public class RecordService extends Service implements LocationListener {
     boolean isGPSEnabled = false;
     private ArrayList<String> dataGps = new ArrayList<String>();
     private ArrayList <String> hooks = new ArrayList<String>();
+    private ProgressBar level;
+    private LinkedHashMap<Number,Number> mapLevels;
+    private String ampList;
     // flag for network status
     boolean isNetworkEnabled = false;
     private static String mFileName = null;
@@ -128,9 +133,9 @@ public class RecordService extends Service implements LocationListener {
             hooks.clear();
             fOut.close();
 
-/*            //<editor-fold desc="svellangGraph">
+            //<editor-fold desc="svellangGraph">
             ampList = mapLevels.toString().replaceAll(", ","\n").replaceAll("=",":").replaceAll("\\{","").replaceAll("\\}","");
-            myFile = new File(m_chosenDir + File.separator+ hookString +"~.txt");
+            myFile = new File(filename +"~.txt");
             myFile.createNewFile();
             fOut = new FileOutputStream(myFile);
             myOutWriter =
@@ -145,7 +150,7 @@ public class RecordService extends Service implements LocationListener {
 
             Toast.makeText(getBaseContext(),
                     "Done writing SD 'mysdfile.txt'",
-                    Toast.LENGTH_SHORT).show();*/
+                    Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(getBaseContext(), e.getMessage(),
                     Toast.LENGTH_SHORT).show();
@@ -189,7 +194,7 @@ public class RecordService extends Service implements LocationListener {
 //        thread.setPriority(Thread.currentThread().getThreadGroup().getMaxPriority());
 //
 //        thread.start();
-
+        mapLevels=new LinkedHashMap<>();
         handler.removeCallbacks(update);
         handler.postDelayed(update, 25);
         //</editor-fold>
@@ -394,6 +399,9 @@ public class RecordService extends Service implements LocationListener {
             intent.putExtra("RECORD_SERVICE_AMPLITUDE", mRecorder.getMaxAmplitude());
             sendBroadcast(intent);
             handler.postAtTime(this, SystemClock.uptimeMillis() + 100);
+            long timeNow=System.currentTimeMillis() - starttime;
+            Log.d("Receiver", String.valueOf(timeNow));
+            mapLevels.put(timeNow, mRecorder.getMaxAmplitude());
         }
     };
 
