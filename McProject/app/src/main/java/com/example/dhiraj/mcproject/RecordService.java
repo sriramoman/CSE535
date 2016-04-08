@@ -50,7 +50,7 @@ public class RecordService extends Service implements LocationListener {
     // flag for GPS status
     boolean isGPSEnabled = false;
     private ArrayList<String> dataGps = new ArrayList<String>();
-    private ArrayList <String> hooks = new ArrayList<String>();
+    private LinkedHashMap <Number,String> hooks;
     private ProgressBar level;
     private LinkedHashMap<Number,Number> mapLevels;
 //    private String ampList;
@@ -110,8 +110,9 @@ public class RecordService extends Service implements LocationListener {
                 case 3:
                     String h = msg.getData().getString("str1");
                     Toast.makeText(getApplicationContext(),"hooked text" + h, Toast.LENGTH_SHORT).show();
-                    String hookst = hookTime + ":" + h;
-                    hooks.add(hookst);
+//                    String hookst = hookTime + ":" + h;
+//                    hooks.add(hookst);
+                    hooks.put(hookTime,h);
                 case 4:
                     hookTime = msg.getData().getLong("str1") - starttime;
                 default:
@@ -124,25 +125,17 @@ public class RecordService extends Service implements LocationListener {
             File myFile = new File(filename +"$.txt");
             myFile.createNewFile();
             FileOutputStream fOut = new FileOutputStream(myFile);
-            OutputStreamWriter myOutWriter =
-                    new OutputStreamWriter(fOut);
-            for (String s : hooks){
-                myOutWriter.append(s + "\n");
-            }
-            myOutWriter.close();
+            ObjectOutputStream s = new ObjectOutputStream(fOut);
+            s.writeObject(hooks);
+            s.close();
             hooks.clear();
             fOut.close();
 
             //<editor-fold desc="svellangGraph">
-//            ampList = mapLevels.toString().replaceAll(", ","\n").replaceAll("=",":").replaceAll("\\{","").replaceAll("\\}","");
             myFile = new File(filename +"~.txt");
             myFile.createNewFile();
             fOut = new FileOutputStream(myFile);
-//            myOutWriter = new OutputStreamWriter(fOut);
-//            Log.d("Time", ampList);
-//            myOutWriter.append(ampList);
-//            myOutWriter.close();
-            ObjectOutputStream s = new ObjectOutputStream(fOut);
+            s = new ObjectOutputStream(fOut);
             s.writeObject(mapLevels);
             s.close();
             fOut.close();
@@ -203,6 +196,7 @@ public class RecordService extends Service implements LocationListener {
 //        thread.setPriority(Thread.currentThread().getThreadGroup().getMaxPriority());
 //
 //        thread.start();
+        hooks = new LinkedHashMap<>();
         mapLevels=new LinkedHashMap<>();
         handler.removeCallbacks(update);
         handler.postDelayed(update, 25);
