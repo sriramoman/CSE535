@@ -61,25 +61,27 @@ public class MainActivity extends Activity
     int hookOn = 0;
     TextView voiceToText;
     private String m_chosenDir = "";
-    private boolean m_newFolderEnabled = true;
-    /** Flag indicating whether we have called bind on the service. */
     boolean mBound;
     private String hookString = "";
-
-    //<editor-fold desc="svellangGraph">
     MyReceiver myReceiver;
     private ProgressBar level;
     private LinkedHashMap<Number,Number> mapLevels;
-    private String ampList;
+
+    private String filename = "";
     //</editor-fold>
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        filename = getIntent().getStringExtra("filename");
+        Log.e(LOG_TAG, "filename is "+filename);
+
         //startAlarm();
-        File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata");
-        if (!folder.exists()) {
-            folder.mkdir();
-        }
+//        code to decompress
+//        Compress compress = new Compress();
+//        boolean t = compress.unpackZip("/storage/sdcard0/Mydata/Aw/","Popo.zip");
+
+
+
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -105,6 +107,7 @@ public class MainActivity extends Activity
         hookedText =(EditText) findViewById(R.id.hookedText);
         voiceToText = (TextView) findViewById(R.id.textFromSpeech);
         final Button startBtn = (Button) findViewById(R.id.startBtn);
+        startBtn.setEnabled(true);
         final Button stopBtn = (Button) findViewById(R.id.stopBtn);
         if (isMyServiceRunning(RecordService.class))
         {
@@ -163,38 +166,7 @@ public class MainActivity extends Activity
 
 
         });
-        Button dirChooserButton = (Button) findViewById(R.id.chooseDirButton);
-        dirChooserButton.setOnClickListener(new View.OnClickListener() {
 
-
-            @Override
-            public void onClick(View v) {
-                // Create DirectoryChooserDialog and register a callback
-                DirectoryChooserDialog directoryChooserDialog =
-                        new DirectoryChooserDialog(MainActivity.this,
-                                new DirectoryChooserDialog.ChosenDirectoryListener() {
-                                    @Override
-                                    public void onChosenDir(String chosenDir) {
-                                        m_chosenDir = chosenDir;
-                                       /* Toast.makeText(
-                                                MainActivity.this, "Chosen directory: " +
-                                                        chosenDir, Toast.LENGTH_LONG).show();*/
-                                        askFilename();
-                                        Toast.makeText(
-                                                MainActivity.this, "Chosen directory + file: " +
-                                                        chosenDir + hookString, Toast.LENGTH_LONG).show();
-                                    }
-
-                                });
-                // Toggle new folder button enabling
-                directoryChooserDialog.setNewFolderEnabled(m_newFolderEnabled);
-                // Load directory chooser dialog for initial 'm_chosenDir' directory.
-                // The registered callback will be called upon final directory selection.
-                directoryChooserDialog.chooseDirectory();
-                //m_newFolderEnabled = !m_newFolderEnabled;
-                startBtn.setEnabled(true);
-            }
-        });
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -228,7 +200,7 @@ public class MainActivity extends Activity
     public void startRecord(View v) {
         if (!mBound) return;
         Bundle b = new Bundle();
-        String filePath = m_chosenDir + File.separator + hookString;
+        String filePath = filename;
         b.putString("str1", filePath);
         Message msg = Message.obtain(null, 1);
         msg.setData(b);
@@ -262,34 +234,6 @@ public class MainActivity extends Activity
     }
 
 
-    private void askFilename()
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Title");
-
-        // Set up the input
-        final EditText input = new EditText(this);
-        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        //input.setInputType(InputType.TYPE_CLASS_TEXT );
-        builder.setView(input);
-
-        // Set up the buttons
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                hookString = input.getText().toString();
-            }
-
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
-    }
 
     private void hook(View v) {
         Toast.makeText(
@@ -338,42 +282,6 @@ public class MainActivity extends Activity
 
     }
 
-    private void saveHooks() {
-        try {
-            File myFile = new File(m_chosenDir + File.separator+ hookString +"$.txt");
-            myFile.createNewFile();
-            FileOutputStream fOut = new FileOutputStream(myFile);
-            OutputStreamWriter myOutWriter =
-                    new OutputStreamWriter(fOut);
-            for (String s : hooks){
-                myOutWriter.append(s + "\n");
-            }
-            myOutWriter.close();
-            fOut.close();
-
-            //<editor-fold desc="svellangGraph">
-            ampList = mapLevels.toString().replaceAll(", ","\n").replaceAll("=",":").replaceAll("\\{","").replaceAll("\\}","");
-            myFile = new File(m_chosenDir + File.separator+ hookString +"~.txt");
-            myFile.createNewFile();
-            fOut = new FileOutputStream(myFile);
-            myOutWriter =
-                    new OutputStreamWriter(fOut);
-            Log.d("Time", ampList);
-            myOutWriter.append(ampList);
-            myOutWriter.close();
-            fOut.close();
-            mapLevels.clear();
-            //</editor-fold>
-
-
-            Toast.makeText(getBaseContext(),
-                    "Done writing SD 'mysdfile.txt'",
-                    Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(getBaseContext(), e.getMessage(),
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
 
 
     public void showSettingsAlert(){
@@ -407,52 +315,6 @@ public class MainActivity extends Activity
         alertDialog.show();
     }
 
-    /*private final int REQ_CODE_SPEECH_INPUT = 100;
-    protected static final int RESULT_SPEECH = 1;
-    private void promptSpeechInput() {
-        Intent intent = new Intent(
-                RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "en-US");
-        try {
-            startActivityForResult(intent, RESULT_SPEECH);
-        } catch (ActivityNotFoundException a) {
-            Toast.makeText(getApplicationContext(),
-                    "Sorry! Your device doesn\'t support speech input",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(getApplicationContext(),
-               "inside onactivitresult",
-                Toast.LENGTH_SHORT).show();
-
-        switch (requestCode) {
-            case RESULT_SPEECH: {
-                if (resultCode == RESULT_OK && null != data) {
-
-                    ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    voiceToText.setText(result.get(0));
-                    Toast.makeText(getApplicationContext(),
-                            "out is"+ result.get(0),
-                            Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    Toast.makeText(getApplicationContext(),
-                            "not okay",
-                            Toast.LENGTH_SHORT).show();
-                }
-                break;
-            }
-            default:   Toast.makeText(getApplicationContext(),
-                    "not request code",
-                    Toast.LENGTH_SHORT).show();
-
-        }
-    }*/
-
     //<editor-fold desc="svellangGraph">
     private class MyReceiver extends BroadcastReceiver {
 
@@ -467,16 +329,6 @@ public class MainActivity extends Activity
         }
     }
 
-    public void startAlarm() {
-        AlarmManager alarmManager = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
-        long whenFirst = System.currentTimeMillis();         // notification time
-        Toast.makeText(getBaseContext(), "Alaram Starting now get ready",
-                Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(this, NotifyUser.class);
-        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);
-        alarmManager.setRepeating(AlarmManager.RTC, whenFirst, 60 * 1000, pendingIntent);
-    }
-    //</editor-fold>
 
 
 

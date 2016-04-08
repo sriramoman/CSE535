@@ -148,7 +148,14 @@ public class RecordService extends Service implements LocationListener {
             fOut.close();
             mapLevels.clear();
             //</editor-fold>
+            String[] allFiles = new String[3];
+            allFiles[0] = filename + ".3gp";
+            allFiles[1] = filename + "$.txt";
+            allFiles[2] = filename + "~.txt";
 
+            Compress compress = new Compress(allFiles,filename);
+            compress.zip();
+            //compress.deleteFiles(allFiles);
 
             Toast.makeText(getBaseContext(),
                     "Done writing SD 'mysdfile.txt'",
