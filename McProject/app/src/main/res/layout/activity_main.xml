@@ -14,31 +14,28 @@
         android:layout_height="wrap_content"
         android:text="Start"
         android:id="@+id/startBtn"
-        android:layout_alignTop="@+id/stopBtn"
-        android:layout_toLeftOf="@+id/hookBtn"
+        android:enabled="true"
+        android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/hookBtn"
-        android:enabled="false" />
+        android:layout_toLeftOf="@+id/hookBtn" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Stop"
         android:id="@+id/stopBtn"
-        android:layout_marginTop="38dp"
         android:enabled="false"
         android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/textFromSpeech"
-        android:layout_alignEnd="@+id/textFromSpeech" />
+        android:layout_alignRight="@+id/lay"
+        android:layout_alignEnd="@+id/lay" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hook Button"
+        android:text="Hook Text"
         android:id="@+id/hookBtn"
-        android:layout_marginTop="73dp"
-        android:layout_below="@+id/chooseDirButton"
-        android:layout_alignRight="@+id/chooseDirButton"
-        android:layout_alignEnd="@+id/chooseDirButton" />
+        android:layout_above="@+id/hookedText"
+        android:layout_centerHorizontal="true" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -46,8 +43,6 @@
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/hookedText"
-        android:layout_below="@+id/hookBtn"
-        android:layout_marginTop="61dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -55,14 +50,6 @@
         android:layout_alignParentStart="true"
         android:text="Hooked text"
         android:enabled="false" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dir Selc"
-        android:id="@+id/chooseDirButton"
-        android:layout_alignTop="@+id/textFromSpeech"
-        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -74,15 +61,29 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
-    <ProgressBar
+    ProgressBar
         android:id="@+id/progressbar_level"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="1728dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.13"
-        android:layout_below="@+id/startBtn"
+        android:max="32676"        android:indeterminate="false"
+        android:layout_above="@+id/startBtn"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+    <LinearLayout
+        android:id="@+id/lay"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+
+        android:background="#FFFF"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:max="32676" />
+        android:layout_above="@+id/hookBtn"
+        android:layout_below="@+id/startBtn">
+
+
+    </LinearLayout>
+
 
 </RelativeLayout>

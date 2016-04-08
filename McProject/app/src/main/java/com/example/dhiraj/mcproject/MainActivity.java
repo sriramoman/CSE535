@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.location.LocationManager;
+import android.media.audiofx.Visualizer;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.Message;
@@ -31,6 +32,7 @@ import android.view.View;
 
 import android.content.Context;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +49,8 @@ import java.util.TimerTask;
 
 public class MainActivity extends Activity
 {
+    LinearLayout layout;
+    VisualizerView mVisualizer;
     private ArrayList <String> hooks = new ArrayList<String>();
     private static final String LOG_TAG = "AudioRecordTest";
     private static String mFileName = null;
@@ -74,7 +78,7 @@ public class MainActivity extends Activity
         super.onCreate(icicle);
         filename = getIntent().getStringExtra("filename");
         Log.e(LOG_TAG, "filename is "+filename);
-
+        setContentView(R.layout.activity_main);
         //startAlarm();
 //        code to decompress
 //        Compress compress = new Compress();
@@ -89,10 +93,14 @@ public class MainActivity extends Activity
         if (!isGPSEnabled) {
             //showSettingsAlert();
         }
-        setContentView(R.layout.activity_main);
+
+        layout = (LinearLayout) findViewById(R.id.lay);
+        mVisualizer = new VisualizerView(this);
+        layout.addView(mVisualizer);
+
         //<editor-fold desc="svellangGraph">
-        level = (ProgressBar) findViewById(R.id.progressbar_level);
-        level.setProgress(500);
+        //level = (ProgressBar) findViewById(R.id.progressbar_level);
+        //level.setProgress(500);
         mapLevels=new LinkedHashMap<>();
         Intent serviceIntent;
         //</editor-fold>
@@ -148,7 +156,7 @@ public class MainActivity extends Activity
                     Log.d("Hook",String.valueOf(hookTime));
                     hookedText.setEnabled(true);
                     hookedText.requestFocus();
-                    hookBtn.setText("Save");
+                    hookBtn.setText("Save Hook");
                     hookOn = 1;
 
                 }
@@ -156,7 +164,7 @@ public class MainActivity extends Activity
                 {
                     hook(v);
                     hookedText.setEnabled(false);
-                    hookBtn.setText("Hook");
+                    hookBtn.setText("Hook Text");
                     hookBtn.requestFocus();
                     hookOn = 0;
                 }
@@ -322,7 +330,10 @@ public class MainActivity extends Activity
         public void onReceive(Context arg0, Intent arg1) {
             // TODO Auto-generated method stub
             int datapassed = arg1.getIntExtra("RECORD_SERVICE_AMPLITUDE", 0);
-            level.setProgress(datapassed);
+            layout.removeAllViews();
+            mVisualizer.updateVisualizer(datapassed / 50);
+            layout.addView(mVisualizer);
+            //level.setProgress(datapassed);
             long timeNow=System.currentTimeMillis() - starttime;
             Log.d("Receiver", String.valueOf(timeNow));
             mapLevels.put(timeNow, datapassed);
