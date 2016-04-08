@@ -25,6 +25,7 @@ public class HomeScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home_screen);
         File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata");
         if (!folder.exists()) {
             folder.mkdir();
@@ -71,7 +72,7 @@ public class HomeScreen extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        setContentView(R.layout.activity_home_screen);
+
     }
     private void askFilename()
     {
