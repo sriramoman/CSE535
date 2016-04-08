@@ -34,11 +34,11 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -53,7 +53,7 @@ public class RecordService extends Service implements LocationListener {
     private ArrayList <String> hooks = new ArrayList<String>();
     private ProgressBar level;
     private LinkedHashMap<Number,Number> mapLevels;
-    private String ampList;
+//    private String ampList;
     // flag for network status
     boolean isNetworkEnabled = false;
     private static String mFileName = null;
@@ -134,15 +134,17 @@ public class RecordService extends Service implements LocationListener {
             fOut.close();
 
             //<editor-fold desc="svellangGraph">
-            ampList = mapLevels.toString().replaceAll(", ","\n").replaceAll("=",":").replaceAll("\\{","").replaceAll("\\}","");
+//            ampList = mapLevels.toString().replaceAll(", ","\n").replaceAll("=",":").replaceAll("\\{","").replaceAll("\\}","");
             myFile = new File(filename +"~.txt");
             myFile.createNewFile();
             fOut = new FileOutputStream(myFile);
-            myOutWriter =
-                    new OutputStreamWriter(fOut);
-            Log.d("Time", ampList);
-            myOutWriter.append(ampList);
-            myOutWriter.close();
+//            myOutWriter = new OutputStreamWriter(fOut);
+//            Log.d("Time", ampList);
+//            myOutWriter.append(ampList);
+//            myOutWriter.close();
+            ObjectOutputStream s = new ObjectOutputStream(fOut);
+            s.writeObject(mapLevels);
+            s.close();
             fOut.close();
             mapLevels.clear();
             //</editor-fold>
