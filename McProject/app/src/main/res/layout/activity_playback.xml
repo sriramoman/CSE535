@@ -9,57 +9,81 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.dhiraj.mcproject.PlaybackActivity">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stop"
-        android:id="@+id/btnStop"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
-    <Button
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="play"
-        android:id="@+id/btnPlay"
-        android:layout_below="@+id/btnStop"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="false"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/linearLayout">
+        <ImageButton
+            android:id="@+id/btnPlay"
+            android:src="@drawable/play"
+            android:layout_toRightOf="@+id/playback.hookText"
+            android:layout_toEndOf="@+id/playback.hookText"
+            android:layout_alignParentTop="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:id="@+id/btnRewind"
+            android:src="@drawable/rewind"
+            android:layout_toRightOf="@+id/btnPlay"
+            android:layout_toEndOf="@+id/btnPlay"
+            android:layout_alignParentTop="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageButton
+            android:id="@+id/btnFwd"
+            android:src="@drawable/fwd"
+            android:layout_alignParentTop="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/btnRewind" />
+
+        <ImageButton
+            android:id="@+id/btnStop"
+            android:src="@drawable/stop"
+            android:layout_alignParentTop="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/seekBar" />
+    </LinearLayout>
+
     <SeekBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/seekBar"
+        android:height="30dp"
+        android:layout_below="@+id/linearLayout"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/btnPlay" />
+        android:layout_alignParentEnd="true"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Load"
-        android:id="@+id/btnLoad"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/btnStop"
-        android:layout_toEndOf="@+id/btnStop" />
+
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/seekBar" />
-    <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-        <!--android:text="Medium Text"-->
-        <!--android:id="@+id/t1"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_alignParentLeft="true"-->
-        <!--android:layout_alignParentStart="true"-->
-        <!--android:layout_marginBottom="135dp"-->
-        <!--android:layout_alignRight="@+id/seekBar"-->
-        <!--android:layout_alignEnd="@+id/seekBar" />-->
+        android:layout_below="@+id/seekBar"
+        android:layout_above="@+id/playback.hookText" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text=""
+        android:id="@+id/playback.hookText"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
 </RelativeLayout>

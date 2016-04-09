@@ -399,12 +399,15 @@ public class RecordService extends Service implements LocationListener {
         public void run() {
             Intent intent = new Intent();
             intent.setAction(RecordServiceAmplitude);
-            intent.putExtra("RECORD_SERVICE_AMPLITUDE", mRecorder.getMaxAmplitude());
-            sendBroadcast(intent);
-            handler.postAtTime(this, SystemClock.uptimeMillis() + 100);
+            int m=mRecorder.getMaxAmplitude();
+            intent.putExtra("RECORD_SERVICE_AMPLITUDE", m);
             long timeNow=System.currentTimeMillis() - starttime;
             Log.d("Receiver", String.valueOf(timeNow));
-            mapLevels.put(timeNow, mRecorder.getMaxAmplitude());
+//            double db=20 * Math.log10( m/ 2700.0);
+//            mapLevels.put(timeNow, Double.isInfinite(db) ? 0 : Math.abs(db));
+            mapLevels.put(timeNow,m);
+            sendBroadcast(intent);
+            handler.postAtTime(this, SystemClock.uptimeMillis() + 300);
         }
     };
 
