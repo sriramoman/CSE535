@@ -18,6 +18,7 @@ public class VisualizerView extends View {
     private Rect mRect = new Rect();
     private Paint mForePaint = new Paint();
     private float mRadius;
+    private float oldRadius = 0.0f;
     public VisualizerView(Context context) {
         super(context);
         init();
@@ -44,6 +45,7 @@ public class VisualizerView extends View {
     }
 
     public void updateVisualizer(float radius) {
+        oldRadius = mRadius;
         mRadius = radius;
         invalidate();
     }
@@ -55,7 +57,12 @@ public class VisualizerView extends View {
         int width = this.getWidth();
         int height = this.getHeight();
         Log.e("hi"," "+height+ " "+ width);
-        canvas.drawCircle(width / 2, height / 2, mRadius + 70, mForePaint);
+        mForePaint.setColor(Color.GRAY);
+        canvas.drawCircle(width / 2, height / 2, oldRadius + 84, mForePaint);
+
+        mForePaint.setColor(Color.rgb(220, 20, 60));
+        canvas.drawCircle(width / 2, height / 2, mRadius + 84, mForePaint);
+
         Bitmap b= BitmapFactory.decodeResource(getResources(), R.drawable.voice);
         //p.setColor(Color.RED);
         canvas.drawBitmap(b,(width / 2) - 64 , (height / 2) - 64 , mForePaint);

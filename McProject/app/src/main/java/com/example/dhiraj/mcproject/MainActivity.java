@@ -331,7 +331,7 @@ public class MainActivity extends Activity
             // TODO Auto-generated method stub
             int datapassed = arg1.getIntExtra("RECORD_SERVICE_AMPLITUDE", 0);
             layout.removeAllViews();
-            mVisualizer.updateVisualizer(datapassed / 50);
+            mVisualizer.updateVisualizer(datapassed / 20);
             layout.addView(mVisualizer);
             //level.setProgress(datapassed);
             long timeNow=System.currentTimeMillis() - starttime;
