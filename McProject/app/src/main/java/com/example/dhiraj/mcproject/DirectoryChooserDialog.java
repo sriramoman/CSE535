@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,8 +51,8 @@ public class DirectoryChooserDialog
         if (!folder.exists()) {
 
             folder.mkdir();
-            Toast.makeText(
-                    m_context, "new folder created mydata", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(
+//                    m_context, "new folder created mydata", Toast.LENGTH_SHORT).show();
         }
         m_sdcardDirectory = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Mydata";
         m_chosenDirectoryListener = chosenDirectoryListener;
@@ -276,9 +276,9 @@ public class DirectoryChooserDialog
                         }
                         else
                         {
-                            Toast.makeText(
-                                    m_context, "Failed to create '" + newDirName +
-                                            "' folder", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(
+//                                    m_context, "Failed to create '" + newDirName +
+//                                            "' folder", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }).setNegativeButton("Cancel", null).show();

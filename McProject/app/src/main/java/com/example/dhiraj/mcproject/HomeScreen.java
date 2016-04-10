@@ -48,9 +48,9 @@ public class HomeScreen extends AppCompatActivity {
                                                 MainActivity.this, "Chosen directory: " +
                                                         chosenDir, Toast.LENGTH_LONG).show();*/
                                         askFilename();
-                                        Toast.makeText(
-                                                HomeScreen.this, "Chosen directory + file: " +
-                                                        chosenDir, Toast.LENGTH_LONG).show();
+//                                        Toast.makeText(
+//                                                HomeScreen.this, "Chosen directory + file: " +
+//                                                        chosenDir, Toast.LENGTH_LONG).show();
                                     }
 
                                 });

@@ -53,12 +53,22 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
     private boolean playerPaused;
     private LinkedHashMap<Number,String> mapHooks;
     private TextView hookedText;
+    private String filename;
+    private String filePath;
+    private String[] allFiles;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playback);
 
         //<editor-fold desc="Initialize objects">
+
+        filePath=Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata/"+"50 cent/";
+        filename="many men";
+        allFiles = new String[3];
+        allFiles[0] = filePath+filename + ".3gp";
+        allFiles[1] = filePath+filename + "$.txt";
+        allFiles[2] = filePath+filename + "~.txt";
         playerPaused=false;
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         btnPlay = (ImageButton)findViewById(R.id.btnPlay);
@@ -163,7 +173,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                         {
                             btnPlay.setImageDrawable(getResources().getDrawable(R.drawable.pause));
                             try {
-                                final Uri myUri = Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata/mc/lw.3gp");
+                                final Uri myUri = Uri.parse(filePath+filename + ".3gp");
                                 mediaPlayer.setDataSource(getApplicationContext(), myUri);
                                 mediaPlayer.prepareAsync();
                             } catch (IOException e) {
@@ -203,7 +213,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                         ArrayList<Number> candidateSeekPositions=new ArrayList<Number>();
                         for (int i=0;i<timeHooks.size();i++){
                             Number hookTime=timeHooks.get(i);
-                            Log.d("Hooktime",hookTime.toString());
+//                            Log.d("Hooktime",hookTime.toString());
                             if (startTime>=hookTime.doubleValue()) {
                                 candidateSeekPositions.add(hookTime);
                             }
@@ -227,7 +237,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                     public void onClick(View v) {
                         for (int i=0;i<timeHooks.size();i++){
                             Number hookTime=timeHooks.get(i);
-                            Log.d("Hooktime",hookTime.toString());
+//                            Log.d("Hooktime",hookTime.toString());
                             if (startTime<=hookTime.doubleValue()) {
                                 mediaPlayer.seekTo(hookTime.intValue());
                                 break;
@@ -251,14 +261,19 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
     }
 
     private void loadMetadata() throws IOException, ClassNotFoundException {
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata/mc/lw~.txt");
+
+
+        Compress compress = new Compress(allFiles,filename);
+        compress.unpackZip(filePath,filename+".drs");
+
+        File file = new File(filePath+filename+"~.txt");
         FileInputStream f = new FileInputStream(file);
         ObjectInputStream s = new ObjectInputStream(f);
         LinkedHashMap<Number,Number> mapLevels  = (LinkedHashMap<Number,Number>) s.readObject();
         s.close();
         f.close();
 
-        file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata/mc/lw$.txt");
+        file = new File(filePath+filename+"$.txt");
         f = new FileInputStream(file);
         s = new ObjectInputStream(f);
         mapHooks  = (LinkedHashMap<Number,String>) s.readObject();
@@ -305,7 +320,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
             xVals.add(time.toString());
             prevTime = time;
         }
-        Log.d("MaxLevel", String.valueOf(max));
+//        Log.d("MaxLevel", String.valueOf(max));
         BarDataSet setAmplitude = new BarDataSet(amplitudeList, "Amplitude");
         setAmplitude.setColors(colors);
         setAmplitude.setHighLightColor(Color.argb(122,255,255,122));
@@ -376,7 +391,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                     boolean blHookFoundAhead=false;
                     for (i=0;i<timeHooks.size();i++){
                         Number hookTime=timeHooks.get(i);
-                        Log.d("Hooktime",hookTime.toString());
+//                        Log.d("Hooktime",hookTime.toString());
                         if (startTime>=hookTime.doubleValue()) {
                             blHookFoundBehind=true;
                             hookedText.setText(mapHooks.get(hookTime));
@@ -421,5 +436,14 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
      */
     public void onNothingSelected(){
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("onDestroy","Gonna stop");
+        stopPlayer();
+        Compress compress = new Compress(allFiles,filePath+filename+".drs");
+        compress.deleteFiles(allFiles);
     }
 }

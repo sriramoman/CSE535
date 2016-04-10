@@ -2,11 +2,7 @@ package com.example.dhiraj.mcproject;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.DialogInterface;
@@ -14,18 +10,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.location.LocationManager;
-import android.media.audiofx.Visualizer;
-import android.os.Environment;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.os.SystemClock;
 import android.provider.Settings;
 
 import android.os.Bundle;
 
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Button;
 import android.view.View;
@@ -35,16 +27,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class MainActivity extends Activity
@@ -119,7 +105,7 @@ public class MainActivity extends Activity
         final Button stopBtn = (Button) findViewById(R.id.stopBtn);
         if (isMyServiceRunning(RecordService.class))
         {
-            Toast.makeText(getBaseContext(),"Service is running",Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getBaseContext(),"Service is running",Toast.LENGTH_SHORT).show();
             if(RecordService.recordingOn == 1) {
 
                 startBtn.setEnabled(false);
@@ -244,14 +230,14 @@ public class MainActivity extends Activity
 
 
     private void hook(View v) {
-        Toast.makeText(
-                MainActivity.this, "Chosen directory + file: " +
-                        m_chosenDir + hookString, Toast.LENGTH_LONG).show();
+//        Toast.makeText(
+//                MainActivity.this, "Chosen directory + file: " +
+//                        m_chosenDir + hookString, Toast.LENGTH_LONG).show();
         String s = hookTime + ":" + hookedText.getText().toString();
         hooks.add(s);
         // change this to sending to servce via mpi
         sendHooks(hookedText.getText().toString());
-        Toast.makeText(getBaseContext(), "Hooked it",Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getBaseContext(), "Hooked it",Toast.LENGTH_SHORT).show();
         hookedText.setText("");
     }
 
