@@ -35,7 +35,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -97,18 +96,19 @@ public class RecordService extends Service implements LocationListener {
                 case 1:
                     String s = msg.getData().getString("str1");
                     filename = s;
-                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
                     startRecording(s);
                     //startRecord(msg);
                     break;
                 case 2:
                     String st = msg.getData().getString("str1");
-                    Toast.makeText(getApplicationContext(), st, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), st, Toast.LENGTH_SHORT).show();
                     stopRecording();
                     saveHooks();
                     break;
                 case 3:
                     String h = msg.getData().getString("str1");
+
                     Toast.makeText(getApplicationContext(),"hooked text" + h, Toast.LENGTH_SHORT).show();
 //                    String hookst = hookTime + ":" + h;
 //                    hooks.add(hookst);
@@ -150,14 +150,14 @@ public class RecordService extends Service implements LocationListener {
 
             Compress compress = new Compress(allFiles,filename);
             compress.zip();
-            //compress.deleteFiles(allFiles);
+            compress.deleteFiles(allFiles);
 
-            Toast.makeText(getBaseContext(),
-                    "Done writing SD 'mysdfile.txt'",
-                    Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getBaseContext(),
+//                    "Done writing SD 'mysdfile.txt'",
+//                    Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Toast.makeText(getBaseContext(), e.getMessage(),
-                    Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getBaseContext(), e.getMessage(),
+//                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -173,31 +173,22 @@ public class RecordService extends Service implements LocationListener {
             dataGps.add(cityStart);
             Log.e(LOG_TAG, cityStart);
         }
-        /*mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/audiorecordtest1.3gp";*/
+
         Date dateStart = new Date();
         String timestampStart = dateStart.toString();
         Log.e(LOG_TAG, timestampStart);
 
         System.out.print(mFileName);
         Log.e(LOG_TAG, mFileName);
-        //Calendar.get(Calendar.DATE);
+
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mRecorder.setOutputFile(mFileName + ".3gp");
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         finalFileName = mFileName;
-        //<editor-fold desc="svellangGraph">
-//        Thread thread = new Thread(new Runnable() {
-//            public void run() {
-//                readAudioBuffer();
-//            }
-//        });
 
-//        thread.setPriority(Thread.currentThread().getThreadGroup().getMaxPriority());
-//
-//        thread.start();
+        //<editor-fold desc="svellangGraph">
         hooks = new LinkedHashMap<>();
         mapLevels=new LinkedHashMap<>();
         handler.removeCallbacks(update);
@@ -263,7 +254,7 @@ public class RecordService extends Service implements LocationListener {
     @Override
     public IBinder onBind(Intent intent) {
         System.out.print("hello start");
-        Toast.makeText(getApplicationContext(), "binding", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "binding", Toast.LENGTH_SHORT).show();
         return mMessenger.getBinder();
     }
 
@@ -404,9 +395,11 @@ public class RecordService extends Service implements LocationListener {
             int m=mRecorder.getMaxAmplitude();
             intent.putExtra("RECORD_SERVICE_AMPLITUDE", m);
             long timeNow=System.currentTimeMillis() - starttime;
+
             //Log.d("Receiver", String.valueOf(timeNow));
 //            double db=20 * Math.log10( m/ 2700.0);
 //            mapLevels.put(timeNow, Double.isInfinite(db) ? 0 : Math.abs(db));
+
             mapLevels.put(timeNow,m);
             sendBroadcast(intent);
             handler.postAtTime(this, SystemClock.uptimeMillis() + 300);
@@ -416,7 +409,6 @@ public class RecordService extends Service implements LocationListener {
     private void createDB(){
         try {
             db = SQLiteDatabase.openOrCreateDatabase(DATABASE_LOCATION, null);
-            //db = SQLiteDatabase.openOrCreateDatabase(Environment.getExternalStorageDirectory()+"/mydb",null);
             db.beginTransaction();
             try {
                 //perform your database operations here ...
@@ -429,7 +421,7 @@ public class RecordService extends Service implements LocationListener {
                         " ); ");
 
                 db.setTransactionSuccessful(); //commit your changes
-                Toast.makeText(this, "db and table created", Toast.LENGTH_LONG).show();
+//                Toast.makeText(this, "db and table created", Toast.LENGTH_LONG).show();
             } catch (SQLiteException e) {
                 //report problem
             } finally {
@@ -437,7 +429,7 @@ public class RecordService extends Service implements LocationListener {
             }
         } catch (SQLException e) {
 
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
     }
@@ -453,7 +445,7 @@ public class RecordService extends Service implements LocationListener {
                     + "' );");
             //db.setTransactionSuccessful(); //commit your changes
         } catch (SQLiteException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         } finally {
             //db.endTransaction();
         }
@@ -463,7 +455,7 @@ public class RecordService extends Service implements LocationListener {
         // Prepare intent which is triggered if the
         // notification is selected
         System.out.print("inside notidication class");
-        Toast.makeText(this, "I am notifiying seeeeeeee", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "I am notifiying seeeeeeee", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this,0,intent,0);
 

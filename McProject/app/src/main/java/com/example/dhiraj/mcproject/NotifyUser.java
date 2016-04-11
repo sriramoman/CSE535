@@ -4,10 +4,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
+//import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 
 public class NotifyUser extends Service {
@@ -26,7 +26,7 @@ public class NotifyUser extends Service {
 
     private void loadNotification() {
         System.out.print("inside notidication class");
-        Toast.makeText(this, "I am notifiying seeeeeeee", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "I am notifiying seeeeeeee", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this,0,intent,0);
         long when = System.currentTimeMillis();

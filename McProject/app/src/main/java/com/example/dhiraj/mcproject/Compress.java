@@ -32,7 +32,7 @@ public class Compress {
     public void zip() {
         try {
             BufferedInputStream origin = null;
-            FileOutputStream dest = new FileOutputStream(_zipFile+".zip");
+            FileOutputStream dest = new FileOutputStream(_zipFile+".drs");
             ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
                     dest));
             byte data[] = new byte[BUFFER];
@@ -109,9 +109,9 @@ public class Compress {
             File fdelete = new File(files[i]);
             if (fdelete.exists()) {
                 if (fdelete.delete()) {
-                    System.out.println("file Deleted :" + files[i]);
+                    Log.d("deleteFileS",files[i]);
                 } else {
-                    System.out.println("file not Deleted :" + files[i]);
+                    Log.d("deleteFileF", files[i]);
                 }
             }
         }
