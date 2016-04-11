@@ -70,7 +70,7 @@ public class MainActivity extends Activity
     MyReceiver myReceiver;
     private ProgressBar level;
     private LinkedHashMap<Number,Number> mapLevels;
-
+    String hookText;
     private String filename = "";
     //</editor-fold>
     @Override
@@ -112,11 +112,11 @@ public class MainActivity extends Activity
         serviceIntent = new Intent(MainActivity.this.getBaseContext(), RecordService.class);
         startService(serviceIntent);
         bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
-        hookedText =(EditText) findViewById(R.id.hookedText);
         voiceToText = (TextView) findViewById(R.id.textFromSpeech);
         final Button startBtn = (Button) findViewById(R.id.startBtn);
         startBtn.setEnabled(true);
         final Button stopBtn = (Button) findViewById(R.id.stopBtn);
+        final Button hookBtn = (Button) findViewById(R.id.hookBtn);
         if (isMyServiceRunning(RecordService.class))
         {
             Toast.makeText(getBaseContext(),"Service is running",Toast.LENGTH_SHORT).show();
@@ -129,8 +129,9 @@ public class MainActivity extends Activity
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hookedText.setText("");
+
                 startBtn.setEnabled(false);
+                hookBtn.setEnabled(true);
                 starttime = System.currentTimeMillis();
                 startRecord(v);
                 stopBtn.setEnabled(true);
@@ -143,54 +144,30 @@ public class MainActivity extends Activity
                 startBtn.setEnabled(true);
                 stopRecord(v);
                 stopBtn.setEnabled(false);
+                hookBtn.setEnabled(false);
             }
         });
-        final Button hookBtn = (Button) findViewById(R.id.hookBtn);
+
         hookBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(hookOn == 0)
-                {
                     hookTime =  System.currentTimeMillis();
                     sendHooktime(hookTime);
-                    Log.d("Hook",String.valueOf(hookTime));
-                    hookedText.setEnabled(true);
-                    hookedText.requestFocus();
-                    hookBtn.setText("Save Hook");
-                    hookOn = 1;
-
-                }
-                else
-                {
-                    hook(v);
-                    hookedText.setEnabled(false);
-                    hookBtn.setText("Hook Text");
-                    hookBtn.requestFocus();
-                    hookOn = 0;
-                }
-
+                    Log.d("Hook", " " + hookTime);
+                    getHook();
 
             }
-
-
         });
 
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
-            // This is called when the connection with the service has been
-            // established, giving us the object we can use to
-            // interact with the service.  We are communicating with the
-            // service using a Messenger, so here we get a client-side
-            // representation of that from the raw IBinder object.
             mService = new Messenger(service);
             mBound = true;
         }
 
         public void onServiceDisconnected(ComponentName className) {
-            // This is called when the connection with the service has been
-            // unexpectedly disconnected -- that is, its process crashed.
             mService = null;
             mBound = false;
         }
@@ -243,16 +220,17 @@ public class MainActivity extends Activity
 
 
 
-    private void hook(View v) {
-        Toast.makeText(
-                MainActivity.this, "Chosen directory + file: " +
-                        m_chosenDir + hookString, Toast.LENGTH_LONG).show();
-        String s = hookTime + ":" + hookedText.getText().toString();
-        hooks.add(s);
-        // change this to sending to servce via mpi
-        sendHooks(hookedText.getText().toString());
-        Toast.makeText(getBaseContext(), "Hooked it",Toast.LENGTH_SHORT).show();
-        hookedText.setText("");
+    private void hook() {
+        if(hookOn == 0){
+            sendHooks(hookText);
+            Toast.makeText(getBaseContext(), "Hooked it",Toast.LENGTH_SHORT).show();
+        }
+
+        else{
+            Toast.makeText(getBaseContext(), "Not hooking",Toast.LENGTH_SHORT).show();
+
+        }
+
     }
 
     private void sendHooks(String s) {
@@ -261,10 +239,6 @@ public class MainActivity extends Activity
         b.putString("str1", s);
         Message msg = Message.obtain(null, 3);
         msg.setData(b);
-        //msg.replyTo = mMessenger;
-
-        // Create and send a message to the service, using a supported 'what' value
-        //Message msg = Message.obtain(null, MessengerService.MSG_SAY_HELLO, 0, 0);
         try {
             mService.send(msg);
         } catch (RemoteException e) {
@@ -275,19 +249,47 @@ public class MainActivity extends Activity
     private void sendHooktime(long t) {
         if (!mBound) return;
         Bundle b = new Bundle();
-        b.putLong("str1",t);
+        b.putLong("str1", t);
         Message msg = Message.obtain(null, 4);
         msg.setData(b);
-        //msg.replyTo = mMessenger;
-
-        // Create and send a message to the service, using a supported 'what' value
-        //Message msg = Message.obtain(null, MessengerService.MSG_SAY_HELLO, 0, 0);
         try {
             mService.send(msg);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void getHook()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter Text To Hook");
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        //input.setInputType(InputType.TYPE_CLASS_TEXT );
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                hookText = input.getText().toString();
+                hookOn = 0;
+                hook();
+            }
+
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                hookOn = 1;
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
 
@@ -335,7 +337,7 @@ public class MainActivity extends Activity
             layout.addView(mVisualizer);
             //level.setProgress(datapassed);
             long timeNow=System.currentTimeMillis() - starttime;
-            Log.d("Receiver", String.valueOf(timeNow));
+            //Log.d("Receiver", String.valueOf(timeNow));
             mapLevels.put(timeNow, datapassed);
         }
     }
