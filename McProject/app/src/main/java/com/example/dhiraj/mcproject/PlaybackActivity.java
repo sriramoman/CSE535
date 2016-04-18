@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -57,6 +58,9 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
     private String filename;
     private String filePath;
     private String[] allFiles;
+    private int hookColor;
+    private int graphColor;
+    private int highlightColor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -249,22 +253,66 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         );
         //</editor-fold>
 
+        setTheme();
         //<editor-fold desc="Load metadata">
         try {
             loadMetadata();
+            getSupportActionBar().setTitle(filename);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         //</editor-fold>
-        setTheme();
     }
 
     private void setTheme(){
         ActionBar bar = getSupportActionBar();
-//for color
-        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
+        //for color
+        //Morning 64B2DF
+        //Evening 24207A
+        //Night 000000
+        RelativeLayout rootLayout = (RelativeLayout)findViewById(R.id.rootLayout);
+
+
+        //Morning
+        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#64B2DF")));
+        rootLayout.setBackgroundColor(getResources().getColor(R.color.colorMorning));
+        hookColor = Color.rgb(150, 10, 10);
+        graphColor = Color.rgb(72,170,255);
+        highlightColor = Color.argb(122,255,255,122);
+        amplitudeChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTH_SIDED);
+
+
+
+
+//        //Evening
+//        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#24207A")));
+//        rootLayout.setBackgroundColor(getResources().getColor(R.color.colorEvening));
+//        hookColor = Color.rgb(255, 255, 0);
+//        graphColor = Color.rgb(0, 255, 122);
+//        highlightColor = Color.argb(100, 255, 160, 122);
+//        amplitudeChart.getAxisLeft().setAxisLineColor(Color.rgb(220, 220, 220));
+//        amplitudeChart.getAxisRight().setAxisLineColor(Color.rgb(220, 220, 220));
+//        amplitudeChart.getXAxis().setTextColor(Color.rgb(220, 220, 220));
+//        amplitudeChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTH_SIDED);
+//        amplitudeChart.getXAxis().setAxisLineColor(Color.rgb(220, 220, 220));
+//        hookedText.setTextColor(Color.rgb(220, 220, 220));
+
+//        //Night
+//        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
+//        rootLayout.setBackgroundColor(getResources().getColor(R.color.colorNight));
+//        hookColor = Color.rgb(255, 255, 0);
+//        graphColor = Color.rgb(220, 220, 220);
+//        highlightColor = Color.argb(100, 255, 160, 122);
+//        amplitudeChart.getAxisLeft().setAxisLineColor(Color.WHITE);
+//        amplitudeChart.getAxisRight().setAxisLineColor(Color.WHITE);
+//        amplitudeChart.getXAxis().setTextColor(Color.WHITE);
+//        amplitudeChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTH_SIDED);
+//        amplitudeChart.getXAxis().setAxisLineColor(Color.WHITE);
+//        hookedText.setTextColor(Color.WHITE);
+
+
     }
 
     private void loadMetadata() throws IOException, ClassNotFoundException {
@@ -309,13 +357,13 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                 for (Number tm:mapHooks.keySet()){
                     if (tm.longValue()>prevTime.longValue()&&tm.longValue()<time.longValue()) {
                         yval = 1.15f*max;
-                        colors[i]=Color.rgb(150, 10, 10);
+                        colors[i]=hookColor;
                     }
                 }
             }
             if (yval==-1) {
                 yval = mapLevels.get(time).floatValue() == 0 ? 0.5f : mapLevels.get(time).floatValue();
-                colors[i]= Color.rgb(193,236,255);
+                colors[i]= graphColor;
             }
             amplitudeList.add(new BarEntry(yval,i++));
             String tString=String.format("%02d:%02d",
@@ -330,7 +378,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
 //        Log.d("MaxLevel", String.valueOf(max));
         BarDataSet setAmplitude = new BarDataSet(amplitudeList, "Amplitude");
         setAmplitude.setColors(colors);
-        setAmplitude.setHighLightColor(Color.argb(122,255,255,122));
+        setAmplitude.setHighLightColor(highlightColor);
         setAmplitude.setBarSpacePercent(2f);
         //</editor-fold>
 

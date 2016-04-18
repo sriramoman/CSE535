@@ -3,8 +3,15 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="colorMorningNav">#64B2DF</color>
-    <color name="colorAfternoonNav">#FFA93A</color>
-    <color name="colorEveningNav">#24207A</color>
-    <color name="colorNightNav">#000000</color>
+    <color name="colorMorning">#E1F1FF</color>
+    <color name="colorEvening">#3868B0</color>
+    <color name="colorNight">#555555</color>
+
+    <!--<color name="colorPrimary">#3F51B5</color>-->
+    <!--<color name="colorPrimaryDark">#303F9F</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
+    <!--<color name="colorMorning">#E1F1FF</color>-->
+    <!--<color name="colorAfternoon">#FFFFBA</color>-->
+    <!--<color name="colorEvening">#E1F1FF</color>-->
+    <!--<color name="colorNight">#000</color>-->
 </resources>
