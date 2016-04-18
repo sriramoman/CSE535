@@ -7,6 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#fff"
     tools:context="com.example.dhiraj.mcproject.MainActivity">
 
     <Button
@@ -34,21 +35,8 @@
         android:layout_height="wrap_content"
         android:text="Hook Text"
         android:id="@+id/hookBtn"
-        android:layout_above="@+id/hookedText"
-        android:layout_centerHorizontal="true" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:ems="10"
-        android:id="@+id/hookedText"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:text="Hooked text"
+        android:layout_centerHorizontal="true"
         android:enabled="false" />
 
     <TextView

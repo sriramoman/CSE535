@@ -108,7 +108,12 @@ public class RecordService extends Service implements LocationListener {
                     break;
                 case 3:
                     String h = msg.getData().getString("str1");
-//                    Toast.makeText(getApplicationContext(),"hooked text" + h, Toast.LENGTH_SHORT).show();
+
+                    Toast.makeText(getApplicationContext(),"hooked text" + h, Toast.LENGTH_SHORT).show();
+//                    String hookst = hookTime + ":" + h;
+//                    hooks.add(hookst);
+                    Log.e("HookgettingAdded",hookTime + ":" + h);
+
                     hooks.put(hookTime,h);
                 case 4:
                     hookTime = msg.getData().getLong("str1") - starttime;
@@ -390,7 +395,11 @@ public class RecordService extends Service implements LocationListener {
             int m=mRecorder.getMaxAmplitude();
             intent.putExtra("RECORD_SERVICE_AMPLITUDE", m);
             long timeNow=System.currentTimeMillis() - starttime;
-            Log.d("Receiver", String.valueOf(timeNow));
+
+            //Log.d("Receiver", String.valueOf(timeNow));
+//            double db=20 * Math.log10( m/ 2700.0);
+//            mapLevels.put(timeNow, Double.isInfinite(db) ? 0 : Math.abs(db));
+
             mapLevels.put(timeNow,m);
             sendBroadcast(intent);
             handler.postAtTime(this, SystemClock.uptimeMillis() + 300);
@@ -471,7 +480,7 @@ public class RecordService extends Service implements LocationListener {
         float min = time.getMinutes();
         float hrmins = hrs + (min/100);
         String t = " " + min/100 + " " + hrmins;
-        Log.e(LOG_TAG, t);
+        //Log.e(LOG_TAG, t);
         float endhrsmins = hrmins + .15f;
         String query = "Select count(*) from Recording where "+
                 "Time >= " + hrmins + " and Time < " + endhrsmins;
@@ -482,10 +491,11 @@ public class RecordService extends Service implements LocationListener {
         int count= mCount.getInt(0);
         mCount.close();
         //db.close();
-        Log.e(LOG_TAG, " the count is " + count);
+        //Log.e(LOG_TAG, " the count is " + count);
         //Toast.makeText(this, "Checking if we want to notify" + count,Toast.LENGTH_LONG).show();
         if (count >=3){
-            generateNotification(getApplicationContext(), "Wanna Start Recording" + count);
+
+            generateNotification(getApplicationContext(), "Wanna Start Recording" + hrmins);
         }
 
     }
