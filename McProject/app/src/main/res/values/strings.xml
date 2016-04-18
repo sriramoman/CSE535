@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Mc Project</string>
     <string name="title_activity_home_screen">HomeScreen</string>
+    <string name="title_activity_google_map_view">Map</string>
 </resources>

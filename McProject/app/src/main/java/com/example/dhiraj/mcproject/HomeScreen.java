@@ -68,7 +68,7 @@ public class HomeScreen extends AppCompatActivity {
         viewRecording.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomeScreen.this, PlaybackActivity.class);
+                Intent intent = new Intent(HomeScreen.this, GoogleMapView.class);
                 startActivity(intent);
             }
         });
