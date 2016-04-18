@@ -1,17 +1,18 @@
 package com.example.dhiraj.mcproject;
 
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -63,8 +64,8 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
 
         //<editor-fold desc="Initialize objects">
 
-        filePath=Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata/"+"50 cent/";
-        filename="many men";
+        filePath=Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata/"+"mc/";
+        filename="vsauce";
         allFiles = new String[3];
         allFiles[0] = filePath+filename + ".3gp";
         allFiles[1] = filePath+filename + "$.txt";
@@ -257,7 +258,13 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
             e.printStackTrace();
         }
         //</editor-fold>
+        setTheme();
+    }
 
+    private void setTheme(){
+        ActionBar bar = getSupportActionBar();
+//for color
+        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
     }
 
     private void loadMetadata() throws IOException, ClassNotFoundException {
