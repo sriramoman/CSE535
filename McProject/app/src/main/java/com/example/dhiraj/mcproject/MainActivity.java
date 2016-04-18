@@ -27,7 +27,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -211,11 +211,11 @@ public class MainActivity extends Activity
     private void hook() {
         if(hookOn == 0){
             sendHooks(hookText);
-            Toast.makeText(getBaseContext(), "Hooked it", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getBaseContext(), "Hooked it", Toast.LENGTH_SHORT).show();
         }
 
         else{
-            Toast.makeText(getBaseContext(), "Not hooking",Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getBaseContext(), "Not hooking",Toast.LENGTH_SHORT).show();
 
         }
 

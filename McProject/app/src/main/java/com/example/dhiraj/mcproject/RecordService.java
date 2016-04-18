@@ -109,7 +109,7 @@ public class RecordService extends Service implements LocationListener {
                 case 3:
                     String h = msg.getData().getString("str1");
 
-                    Toast.makeText(getApplicationContext(),"hooked text" + h, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(),"hooked text" + h, Toast.LENGTH_SHORT).show();
 //                    String hookst = hookTime + ":" + h;
 //                    hooks.add(hookst);
                     Log.e("HookgettingAdded",hookTime + ":" + h);

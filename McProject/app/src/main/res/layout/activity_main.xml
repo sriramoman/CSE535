@@ -11,33 +11,34 @@
     tools:context="com.example.dhiraj.mcproject.MainActivity">
 
     <Button
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start"
+        android:text="Rec"
         android:drawableLeft="@drawable/record"
         android:id="@+id/startBtn"
         android:enabled="true"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/hookBtn" />
+        android:layout_alignParentTop="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Stop"
+        android:drawableLeft="@drawable/stop"
         android:id="@+id/stopBtn"
         android:enabled="false"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/lay"
-        android:layout_alignEnd="@+id/lay" />
+        android:layout_above="@+id/textFromSpeech"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hook Text"
+        android:text="Hook"
         android:id="@+id/hookBtn"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:enabled="false" />
+        android:drawableLeft="@drawable/hook"
+        android:enabled="false"
+        android:layout_alignBottom="@+id/startBtn"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -66,8 +67,9 @@
 
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/hookBtn"
-        android:layout_below="@+id/startBtn">
+        android:layout_below="@+id/startBtn"
+        android:background="@android:color/background_light"
+        android:layout_alignParentBottom="true">
 
 
     </LinearLayout>
