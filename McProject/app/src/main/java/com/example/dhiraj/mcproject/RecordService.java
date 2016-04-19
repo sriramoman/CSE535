@@ -77,10 +77,10 @@ public class RecordService extends Service implements LocationListener {
     String cityEnd;
     private String finalFileName;
     // The minimum distance to change Updates in meters
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0; // 10 meters
     Notification recordingNotify;
     // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
+    private static final long MIN_TIME_BW_UPDATES = 0; // 1 minute
     private MediaRecorder mRecorder = null;
     private static final String LOG_TAG = "AudioRecordTestt";
     //<editor-fold desc="svellangGraph">
@@ -163,16 +163,16 @@ public class RecordService extends Service implements LocationListener {
 
 
     private void startRecording(String mFileName) {
-        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (isGPSEnabled) {
-            Location startLocation = getLocation();
-            latitudeStart = startLocation.getLatitude();
-            longitudeStart = startLocation.getLongitude();
+        getLocation();
+        if(location != null){
+            latitudeStart = latitude;
+            longitudeStart = longitude;
             cityStart = getLocationName(latitudeStart, longitudeStart);
             dataGps.add(cityStart);
             Log.e(LOG_TAG, cityStart);
+
         }
+
 
         Date dateStart = new Date();
         String timestampStart = dateStart.toString();
@@ -209,17 +209,14 @@ public class RecordService extends Service implements LocationListener {
 
     }
     private void stopRecording() {
-        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (isGPSEnabled) {
-            Location startLocation = getLocation();
-            latitudeEnd = startLocation.getLatitude();
-            longitudeEnd = startLocation.getLongitude();
+        getLocation();
+        if (location != null) {
+            latitudeEnd = latitude;
+            longitudeEnd = longitude;
             cityEnd = getLocationName(latitudeEnd, longitudeEnd);
             dataGps.add(cityEnd);
             Log.e(LOG_TAG, cityEnd);
         }
-
 
         handler.removeCallbacks(update);
         mRecorder.stop();
@@ -261,6 +258,7 @@ public class RecordService extends Service implements LocationListener {
     @Override
     public void onCreate() {
         createDB();
+        getLocation();
 
         MyTimerTask myTask = new MyTimerTask();
         Timer myTimer = new Timer();
@@ -271,7 +269,7 @@ public class RecordService extends Service implements LocationListener {
 
 
     //<editor-fold desc="Locations">
-    public Location getLocation() {
+    public void getLocation() {
         try {
             locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
 
@@ -286,8 +284,11 @@ public class RecordService extends Service implements LocationListener {
             if (!isGPSEnabled && !isNetworkEnabled) {
                 // no network provider is enabled
             } else {
+
+                Log.e("Got GPS Location as", "Trying to get location" );
                 this.canGetLocation = true;
                 // First get location from Network Provider
+                // if GPS Enabled get lat/long using GPS Services
                 if (isNetworkEnabled) {
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         locationManager.requestLocationUpdates(
@@ -301,12 +302,12 @@ public class RecordService extends Service implements LocationListener {
                             if (location != null) {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
+                                Log.e("Got network Location as", " " +  latitude + " " + longitude );
                             }
                         }
                     }
 
                 }
-                // if GPS Enabled get lat/long using GPS Services
                 if (isGPSEnabled) {
                     if (location == null) {
                         locationManager.requestLocationUpdates(
@@ -315,22 +316,27 @@ public class RecordService extends Service implements LocationListener {
                                 MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                         Log.d("GPS Enabled", "GPS Enabled");
                         if (locationManager != null) {
+                            Log.d("GPS Enabled", "location manger found");
                             location = locationManager
                                     .getLastKnownLocation(LocationManager.GPS_PROVIDER);
                             if (location != null) {
+
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
+                                Log.e("Got GPS Location as", " " +  latitude + " " + longitude );
                             }
                         }
                     }
                 }
+
+
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return location;
+
     }
 
 
@@ -411,11 +417,16 @@ public class RecordService extends Service implements LocationListener {
             db = SQLiteDatabase.openOrCreateDatabase(DATABASE_LOCATION, null);
             db.beginTransaction();
             try {
+
                 //perform your database operations here ...
                 db.execSQL("create table " + TABLE + " ("
                         + " created_at DATETIME DEFAULT CURRENT_TIMESTAMP, "
                         + " Filename Text, "
+                        + " longitudeStart Real, "
+                        + " latitudeStart Real, "
                         + " StartCity Text, "
+                        + " longitudeEnd Real, "
+                        + " latitudeEnd Real, "
                         + " EndCity Text, "
                         + " Time float" +
                         " ); ");
@@ -437,9 +448,13 @@ public class RecordService extends Service implements LocationListener {
 
         try {
             //perform your database operations here ...
-            db.execSQL("insert into " + TABLE + " (Filename,StartCity,EndCity,Time) values " +
+            db.execSQL("insert into " + TABLE + " (Filename,longitudeStart,latitudeStart,StartCity,longitudeEnd,latitudeEnd,EndCity,Time) values " +
                     "('" + finalFileName
+                    + "', '" + longitudeStart
+                    + "', '" + latitudeStart
                     + "', '" + cityStart
+                    + "', '" + longitudeEnd
+                    + "', '" + latitudeEnd
                     + "', '" + cityEnd
                     + "', '" + starttime
                     + "' );");
