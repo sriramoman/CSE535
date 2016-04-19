@@ -61,6 +61,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
     private int hookColor;
     private int graphColor;
     private int highlightColor;
+    String downloadPath;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,8 +71,13 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         c.unpackZip(filePath);
 
         //<editor-fold desc="Initialize objects">
-
+        downloadPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download";
         //filePath=Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata/"+"mc/";
+        File folder = new File(downloadPath);
+        if (!folder.exists()) {
+            folder.mkdir();
+
+        }
 
         allFiles = new String[3];
         filePath = filePath.substring(0, filePath.length() - 4);
