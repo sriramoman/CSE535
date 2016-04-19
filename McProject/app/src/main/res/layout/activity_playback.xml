@@ -52,6 +52,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignRight="@+id/seekBar" />
+
+        <ImageButton
+            android:id="@+id/downloadButton"
+            android:src="@drawable/download"
+            android:layout_toRightOf="@+id/playback.hookText"
+            android:layout_toEndOf="@+id/playback.hookText"
+            android:layout_alignParentTop="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <SeekBar
