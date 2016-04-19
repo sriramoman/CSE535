@@ -52,8 +52,8 @@ public class FolderView extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_folder_view);
 
-        //root = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
-        root = new File("/storage/emulated/0/Mydata");
+        root = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata");
+        //root = new File("/storage/emulated/0/Mydata");
         curFolder = root;
 
         textView = (TextView) findViewById(R.id.folder);
