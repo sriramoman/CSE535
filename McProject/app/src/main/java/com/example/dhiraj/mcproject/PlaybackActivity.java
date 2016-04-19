@@ -65,15 +65,19 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playback);
+        filePath = getIntent().getStringExtra("filename");
+        Compress c = new Compress();
+        c.unpackZip(filePath);
 
         //<editor-fold desc="Initialize objects">
 
-        filePath=Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata/"+"mc/";
-        filename="vsauce";
+        //filePath=Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata/"+"mc/";
+
         allFiles = new String[3];
-        allFiles[0] = filePath+filename + ".3gp";
-        allFiles[1] = filePath+filename + "$.txt";
-        allFiles[2] = filePath+filename + "~.txt";
+        filePath = filePath.substring(0, filePath.length() - 4);
+        allFiles[0] = filePath + ".3gp";
+        allFiles[1] = filePath + "$.txt";
+        allFiles[2] = filePath + "~.txt";
         playerPaused=false;
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         btnPlay = (ImageButton)findViewById(R.id.btnPlay);
@@ -178,7 +182,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                         {
                             btnPlay.setImageDrawable(getResources().getDrawable(R.drawable.pause));
                             try {
-                                final Uri myUri = Uri.parse(filePath+filename + ".3gp");
+                                final Uri myUri = Uri.parse(filePath + ".3gp");
                                 mediaPlayer.setDataSource(getApplicationContext(), myUri);
                                 mediaPlayer.prepareAsync();
                             } catch (IOException e) {
@@ -318,17 +322,16 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
     private void loadMetadata() throws IOException, ClassNotFoundException {
 
 
-        Compress compress = new Compress(allFiles,filename);
-        compress.unpackZip(filePath,filename+".drs");
 
-        File file = new File(filePath+filename+"~.txt");
+
+        File file = new File(filePath+"~.txt");
         FileInputStream f = new FileInputStream(file);
         ObjectInputStream s = new ObjectInputStream(f);
         LinkedHashMap<Number,Number> mapLevels  = (LinkedHashMap<Number,Number>) s.readObject();
         s.close();
         f.close();
 
-        file = new File(filePath+filename+"$.txt");
+        file = new File(filePath+"$.txt");
         f = new FileInputStream(file);
         s = new ObjectInputStream(f);
         mapHooks  = (LinkedHashMap<Number,String>) s.readObject();

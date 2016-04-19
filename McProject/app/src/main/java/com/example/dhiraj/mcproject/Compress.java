@@ -54,19 +54,27 @@ public class Compress {
             e.printStackTrace();
         }
     }
-    public boolean unpackZip(String path, String zipname)
+    public boolean unpackZip(String path)
     {
         InputStream is;
         ZipInputStream zis;
+        int index = path.indexOf("/");
+        for(int i = path.length() - 1; i >=0 ; i--){
+            if(path.charAt(i) == '/'){
+                index = i;
+                break;
+            }
+        }
+        index = index + 1;
         try
         {
             String filename;
-            is = new FileInputStream(path + zipname);
+            is = new FileInputStream(path);
             zis = new ZipInputStream(new BufferedInputStream(is));
             ZipEntry ze;
             byte[] buffer = new byte[1024];
             int count;
-
+            System.out.print("path + filename");
             while ((ze = zis.getNextEntry()) != null)
             {
                 // zapis do souboru
@@ -76,11 +84,15 @@ public class Compress {
                 // Need to create directories if not exists, or
                 // it will generate an Exception...
                 if (ze.isDirectory()) {
+                    path = path.substring(0, index);
                     File fmd = new File(path + filename);
+                    Log.v("DeCompress file in", path + filename);
+                    System.out.print(path + filename);
                     fmd.mkdirs();
                     continue;
                 }
-
+                path = path.substring(0, index);
+                Log.v("DeCompress file in", path + filename);
                 FileOutputStream fout = new FileOutputStream(path + filename);
 
                 // cteni zipu a zapis

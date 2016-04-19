@@ -104,8 +104,14 @@ public class FolderView extends Activity{
                 File selected = new File(fileMap.get(fileList.get(position)));
                 if (selected.isDirectory())
                     ListDir(selected);
-                else
+                else{
                     Toast.makeText(FolderView.this, selected.toString() + " selected", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(FolderView.this, PlaybackActivity.class).putExtra("filename",selected.toString());
+                    startActivity(intent);
+
+                }
+
+
             }
         });
         Log.i("root",root + " is the directory");
@@ -130,8 +136,8 @@ public class FolderView extends Activity{
             if(file.isDirectory()){
                 fileMap.put(file.getPath().substring(pos),file.getPath());
             }
-            if(file.getPath().contains(".3gp")){
-                lastPos = file.getPath().indexOf(".3gp");
+            if(file.getPath().contains(".drs")){
+                lastPos = file.getPath().indexOf(".drs");
                 fileMap.put(file.getPath().substring(pos,lastPos),file.getPath());
             }
             //fileList.add(file.getPath());
