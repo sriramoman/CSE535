@@ -5,9 +5,11 @@ package com.example.dhiraj.mcproject;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Environment;
@@ -37,6 +39,7 @@ public class FolderView extends Activity{
     private List<String> fileList = new ArrayList<String>();
     private HashMap<String,String> fileMap = new HashMap<String, String>();
     Button buttonUp;
+    Button buttonSort;
     TextView textView;
     ListView listView;
 
@@ -54,6 +57,7 @@ public class FolderView extends Activity{
         curFolder = root;
 
         textView = (TextView) findViewById(R.id.folder);
+        // Button to reach the parent directory
         buttonUp = (Button) findViewById(R.id.up);
         buttonUp.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -63,6 +67,27 @@ public class FolderView extends Activity{
             }
         });
 
+        // Button to sort the files as required
+        final String[] options = {"Name","Time","Location"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, options);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Sorting Option");
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        final AlertDialog alert = builder.create();
+        buttonSort = (Button) findViewById(R.id.sort);
+        buttonSort.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                alert.show();
+            }
+        });
+
+        // ListView of the files displayed
         listView = (ListView) findViewById(R.id.listView);
         ListDir(root);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

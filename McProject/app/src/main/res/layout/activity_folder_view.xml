@@ -9,7 +9,8 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:weightSum="1">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -18,9 +19,17 @@
 
         <Button
             android:id="@+id/up"
-            android:layout_width="match_parent"
+            android:layout_width="201dp"
             android:layout_height="wrap_content"
-            android:text="Parent folder"/>
+            android:text="Parent folder"
+            android:layout_weight="1.04" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View By"
+            android:id="@+id/sort" />
 
     </LinearLayout>
 
