@@ -75,6 +75,8 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
 
         allFiles = new String[3];
         filePath = filePath.substring(0, filePath.length() - 4);
+        String[]tokens = filePath.split("/");
+        filename = tokens[tokens.length-1];
         allFiles[0] = filePath + ".3gp";
         allFiles[1] = filePath + "$.txt";
         allFiles[2] = filePath + "~.txt";
@@ -501,7 +503,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         super.onDestroy();
         Log.d("onDestroy","Gonna stop");
         stopPlayer();
-        Compress compress = new Compress(allFiles,filePath+filename+".drs");
+        Compress compress = new Compress(allFiles,filePath+".drs");
         compress.deleteFiles(allFiles);
     }
 }
