@@ -105,7 +105,7 @@ public class FolderView extends Activity{
                 if (selected.isDirectory())
                     ListDir(selected);
                 else{
-                    Toast.makeText(FolderView.this, selected.toString() + " selected", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(FolderView.this, selected.toString() + " selected", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(FolderView.this, PlaybackActivity.class).putExtra("filename",selected.toString());
                     startActivity(intent);
 
