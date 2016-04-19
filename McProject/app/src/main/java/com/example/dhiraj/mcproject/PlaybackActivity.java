@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -61,6 +62,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
     private int hookColor;
     private int graphColor;
     private int highlightColor;
+    Button downloadButton;
     String downloadPath;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +71,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         filePath = getIntent().getStringExtra("filename");
         Compress c = new Compress();
         c.unpackZip(filePath);
-
+        downloadButton = (Button)findViewById(R.id.downloadButton);
         //<editor-fold desc="Initialize objects">
         downloadPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download";
         //filePath=Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata/"+"mc/";

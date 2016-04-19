@@ -19,14 +19,6 @@
         android:layout_alignParentLeft="false"
         android:layout_centerHorizontal="true"
         android:id="@+id/linearLayout">
-        <ImageButton
-            android:id="@+id/btnPlay"
-            android:src="@drawable/play"
-            android:layout_toRightOf="@+id/playback.hookText"
-            android:layout_toEndOf="@+id/playback.hookText"
-            android:layout_alignParentTop="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
 
         <ImageButton
             android:id="@+id/btnRewind"
@@ -85,6 +77,25 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Download"
+        android:id="@+id/downloadButton"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/linearLayout"
+        android:layout_toEndOf="@+id/linearLayout" />
+
+    <ImageButton
+        android:id="@+id/btnPlay"
+        android:src="@drawable/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/seekBar"
+        android:layout_toLeftOf="@+id/linearLayout"
+        android:layout_toStartOf="@+id/linearLayout" />
 
 
 </RelativeLayout>
