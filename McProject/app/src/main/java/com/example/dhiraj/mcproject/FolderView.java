@@ -75,7 +75,13 @@ public class FolderView extends Activity{
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                if(which == 2){
+                    Intent intent = new Intent(FolderView.this, GoogleMapView.class);
+                    startActivity(intent);
+                }
+                else{
+                    Toast.makeText(FolderView.this, "finally selected", Toast.LENGTH_LONG).show();
+                }
             }
         });
         final AlertDialog alert = builder.create();
@@ -87,13 +93,14 @@ public class FolderView extends Activity{
             }
         });
 
+
         // ListView of the files displayed
         listView = (ListView) findViewById(R.id.listView);
         ListDir(root);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("map",fileMap+" is this");
+                //Log.i("map",fileMap+" is this");
                 File selected = new File(fileMap.get(fileList.get(position)));
                 if (selected.isDirectory())
                     ListDir(selected);
@@ -137,5 +144,3 @@ public class FolderView extends Activity{
         listView.setAdapter(directoryList);
     }
 }
-
-
