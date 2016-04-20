@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
@@ -29,6 +30,9 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,7 +66,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
     private int hookColor;
     private int graphColor;
     private int highlightColor;
-    Button downloadButton;
+    ImageButton downloadButton;
     String downloadPath;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,15 +75,16 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         filePath = getIntent().getStringExtra("filename");
         Compress c = new Compress();
         c.unpackZip(filePath);
-        downloadButton = (Button)findViewById(R.id.downloadButton);
+        downloadButton = (ImageButton)findViewById(R.id.downloadButton);
         //<editor-fold desc="Initialize objects">
-        downloadPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download";
+        downloadPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SmartRecorderDownloads";
         //filePath=Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata/"+"mc/";
         File folder = new File(downloadPath);
         if (!folder.exists()) {
             folder.mkdir();
 
         }
+
 
         allFiles = new String[3];
         filePath = filePath.substring(0, filePath.length() - 4);
@@ -131,6 +136,37 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
             }
         });
         //</editor-fold>
+        downloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int index = 0;
+                for(int i = allFiles[0].length() - 1; i >=0 ; i--){
+                    if(allFiles[0].charAt(i) == '/'){
+                        index = i;
+                        break;
+
+                    }
+                }
+                index = index + 1;
+
+                String sourcePath = allFiles[0];
+                File source = new File(sourcePath);
+                String recordName = allFiles[0].substring(index, allFiles[0].length());
+                String destinationPath = downloadPath;
+                File destination = new File(destinationPath+"/"+recordName);
+                try
+                {
+
+                    FileUtils.copyFile(source, destination);
+                    Toast.makeText(getBaseContext(), "Saved it" + destinationPath+"/"+recordName, Toast.LENGTH_SHORT).show();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+                //promptSpeechInput();
+            }
+        });
 
         //<editor-fold desc="UI Control callback methods">
         playBar.setOnTouchListener(new View.OnTouchListener() {

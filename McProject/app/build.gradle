@@ -26,6 +26,7 @@ dependencies {
     compile 'com.android.support:design:23.3.0'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
     compile 'com.google.android.gms:play-services:8.4.0'
+    compile 'commons-io:commons-io:2.4'
 }
 
 repositories {
