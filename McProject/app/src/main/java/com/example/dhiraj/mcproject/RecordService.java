@@ -422,6 +422,7 @@ public class RecordService extends Service implements LocationListener {
                 db.execSQL("create table " + TABLE + " ("
                         + " created_at DATETIME DEFAULT CURRENT_TIMESTAMP, "
                         + " Filename Text, "
+                        + "startTime Real, "
                         + " longitudeStart Real, "
                         + " latitudeStart Real, "
                         + " StartCity Text, "
@@ -444,19 +445,20 @@ public class RecordService extends Service implements LocationListener {
         }
 
     }
-    private void insertRecord(String cityStart, String cityEnd, String finalFileName, float starttime){
+    private void insertRecord(String cityStart, String cityEnd, String finalFileName, float time){
 
         try {
             //perform your database operations here ...
-            db.execSQL("insert into " + TABLE + " (Filename,longitudeStart,latitudeStart,StartCity,longitudeEnd,latitudeEnd,EndCity,Time) values " +
+            db.execSQL("insert into " + TABLE + " (Filename,startTime,longitudeStart,latitudeStart,StartCity,longitudeEnd,latitudeEnd,EndCity,Time) values " +
                     "('" + finalFileName
+                    + "', '" + starttime
                     + "', '" + longitudeStart
                     + "', '" + latitudeStart
                     + "', '" + cityStart
                     + "', '" + longitudeEnd
                     + "', '" + latitudeEnd
                     + "', '" + cityEnd
-                    + "', '" + starttime
+                    + "', '" + time
                     + "' );");
             //db.setTransactionSuccessful(); //commit your changes
         } catch (SQLiteException e) {
