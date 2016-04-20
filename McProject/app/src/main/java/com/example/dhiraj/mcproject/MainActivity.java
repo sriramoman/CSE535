@@ -59,8 +59,10 @@ public class MainActivity extends Activity
     private LinkedHashMap<Number,Number> mapLevels;
     String hookText;
     private String filename = "";
+    int playmode = 0;
     //</editor-fold>
     @Override
+
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         filename = getIntent().getStringExtra("filename");
@@ -116,19 +118,29 @@ public class MainActivity extends Activity
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(playmode == 0){
+                    startBtn.setEnabled(false);
+                    hookBtn.setEnabled(true);
+                    starttime = System.currentTimeMillis();
+                    startRecord(v);
+                    stopBtn.setEnabled(true);
+                    //promptSpeechInput();
+                }
 
-                startBtn.setEnabled(false);
-                hookBtn.setEnabled(true);
-                starttime = System.currentTimeMillis();
-                startRecord(v);
-                stopBtn.setEnabled(true);
-                //promptSpeechInput();
+                else{
+                    Intent intent = new Intent(MainActivity.this, PlaybackActivity.class).putExtra("filename",filename+".drs");
+                    startActivity(intent);
+
+                }
+
             }
         });
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startBtn.setEnabled(true);
+                startBtn.setText("Play");
+                playmode = 1;
                 stopRecord(v);
                 stopBtn.setEnabled(false);
                 hookBtn.setEnabled(false);
