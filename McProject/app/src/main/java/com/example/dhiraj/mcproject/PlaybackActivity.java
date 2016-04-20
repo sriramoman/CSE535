@@ -62,6 +62,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
     private TextView hookedText;
     private String filename;
     private String filePath;
+    private String filePrefix;
     private String[] allFiles;
     private int hookColor;
     private int graphColor;
@@ -82,7 +83,6 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         File folder = new File(downloadPath);
         if (!folder.exists()) {
             folder.mkdir();
-
         }
 
 
@@ -90,6 +90,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         filePath = filePath.substring(0, filePath.length() - 4);
         String[]tokens = filePath.split("/");
         filename = tokens[tokens.length-1];
+        filePrefix = tokens[tokens.length-2]+"_";
         allFiles[0] = filePath + ".3gp";
         allFiles[1] = filePath + "$.txt";
         allFiles[2] = filePath + "~.txt";
@@ -153,12 +154,12 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                 File source = new File(sourcePath);
                 String recordName = allFiles[0].substring(index, allFiles[0].length());
                 String destinationPath = downloadPath;
-                File destination = new File(destinationPath+"/"+recordName);
+                File destination = new File(destinationPath+"/"+filePrefix+recordName);
                 try
                 {
 
                     FileUtils.copyFile(source, destination);
-                    Toast.makeText(getBaseContext(), "Saved it" + destinationPath+"/"+recordName, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), "Saved it" + destinationPath+"/"+filePrefix+recordName, Toast.LENGTH_SHORT).show();
                 }
                 catch (IOException e)
                 {

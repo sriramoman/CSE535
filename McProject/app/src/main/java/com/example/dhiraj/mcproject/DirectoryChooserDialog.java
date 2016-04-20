@@ -244,13 +244,13 @@ public class DirectoryChooserDialog
         m_titleView = new TextView(m_context);
         m_titleView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         m_titleView.setTextAppearance(m_context, android.R.style.TextAppearance_Large);
-        m_titleView.setTextColor( m_context.getResources().getColor(android.R.color.white) );
+        m_titleView.setTextColor( m_context.getResources().getColor(android.R.color.black) );
         m_titleView.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-        m_titleView.setText(title);
+        m_titleView.setText("Tags");
 
         Button newDirButton = new Button(m_context);
         newDirButton.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        newDirButton.setText("New folder");
+        newDirButton.setText("New tag");
         newDirButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -260,7 +260,7 @@ public class DirectoryChooserDialog
 
                 // Show new folder name input dialog
                 new AlertDialog.Builder(m_context).
-                        setTitle("New folder name").
+                        setTitle("Tag name").
                         setView(input).setPositiveButton("OK", new DialogInterface.OnClickListener()
                 {
                     public void onClick(DialogInterface dialog, int whichButton)
@@ -307,7 +307,7 @@ public class DirectoryChooserDialog
     {
         m_subdirs.clear();
         m_subdirs.addAll(getDirectories(m_dir) );
-        m_titleView.setText(m_dir);
+        m_titleView.setText("Tags");
 
         m_listAdapter.notifyDataSetChanged();
     }
