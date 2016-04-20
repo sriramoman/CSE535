@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -63,9 +64,12 @@ public class FolderView extends Activity{
             @Override
             public void onClick(View v) {
                 if(curFolder == root);
-                else ListDir(curFolder.getParentFile());
+                else ListDir(curFolder.getParentFile(), -1);
             }
         });
+
+        // Listing all the files present in the directory
+        FileListing(-1);
 
         // Button to sort the files as required
         final String[] options = {"Name","Time","Location"};
@@ -80,44 +84,44 @@ public class FolderView extends Activity{
                     startActivity(intent);
                 }
                 else{
+                    FileListing(which);
+                    //Log.i("This choice", which + " is inside while loop");
                     Toast.makeText(FolderView.this, "finally selected", Toast.LENGTH_LONG).show();
                 }
             }
         });
         final AlertDialog alert = builder.create();
         buttonSort = (Button) findViewById(R.id.sort);
-        buttonSort.setOnClickListener(new View.OnClickListener(){
+        buttonSort.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 alert.show();
             }
         });
+    }
 
-
-        // ListView of the files displayed
+    void FileListing(final int choice){
         listView = (ListView) findViewById(R.id.listView);
-        ListDir(root);
+        ListDir(root, choice);
+        Log.i("This choice", choice + " is inside FileListing");
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Log.i("map",fileMap+" is this");
                 File selected = new File(fileMap.get(fileList.get(position)));
                 if (selected.isDirectory())
-                    ListDir(selected);
-                else{
-//                    Toast.makeText(FolderView.this, selected.toString() + " selected", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(FolderView.this, PlaybackActivity.class).putExtra("filename",selected.toString());
+                    ListDir(selected, choice);
+                else {
+                    // Toast.makeText(FolderView.this, selected.toString() + " selected", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(FolderView.this, PlaybackActivity.class).putExtra("filename", selected.toString());
                     startActivity(intent);
-
                 }
-
-
             }
         });
-        Log.i("root",root + " is the directory");
+        Log.i("root", root + " is the directory");
     }
 
-    void ListDir(File f){
+    void ListDir(File f, int choice){
         if(f.equals(root))
             buttonUp.setEnabled(false);
         else
@@ -143,6 +147,10 @@ public class FolderView extends Activity{
             //fileList.add(file.getPath());
         }
         fileList = new ArrayList<String>(fileMap.keySet());
+        Log.i("This choice", choice + " is inside ListDir");
+        if(choice == 0)
+            Collections.sort(fileList);
+        Log.i("This choice", fileList + " is inside ListDir");
 
         ArrayAdapter<String> directoryList = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, fileList);
