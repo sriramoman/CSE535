@@ -12,6 +12,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -38,11 +40,16 @@ import java.util.List;
 public class FolderView extends Activity{
 
     private List<String> fileList = new ArrayList<String>();
+    private List<String> filePath = new ArrayList<String>();
     private HashMap<String,String> fileMap = new HashMap<String, String>();
+    private HashMap<String,Long> filesByTime = new HashMap<String,Long>();
     Button buttonUp;
     Button buttonSort;
     TextView textView;
     ListView listView;
+    public static final String DATABASE_NAME = "svellangDatabase";
+    public static final String DATABASE_LOCATION = Environment.getExternalStorageDirectory() + File.separator + "Mydata" + File.separator + DATABASE_NAME;
+    SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(DATABASE_LOCATION, null);
 
     static final int CUSTOM_DIALOG_ID = 0;
     File root;
@@ -102,8 +109,8 @@ public class FolderView extends Activity{
 
     void FileListing(final int choice){
         listView = (ListView) findViewById(R.id.listView);
-        ListDir(root, choice);
-        Log.i("This choice", choice + " is inside FileListing");
+        ListDir(curFolder, choice);
+        //Log.i("This choice", choice + " is inside FileListing");
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -147,11 +154,25 @@ public class FolderView extends Activity{
             //fileList.add(file.getPath());
         }
         fileList = new ArrayList<String>(fileMap.keySet());
-        Log.i("This choice", choice + " is inside ListDir");
-        if(choice == 0)
+        filePath = new ArrayList<String>(fileMap.values());
+        //Log.i("This choice", choice + " is inside ListDir");
+        if(choice == 0){
             Collections.sort(fileList);
-        Log.i("This choice", fileList + " is inside ListDir");
-
+        }
+        if(choice == 1){
+            for(String str : filePath){
+                String query = "Select startTime from Recording where Filename = '" + str + "'";
+                Cursor cursor = db.rawQuery(query, null);
+                Long time= null;
+                if(cursor != null && cursor.moveToFirst()){
+                    time = cursor.getLong(cursor.getColumnIndex("startTime"));
+                }
+                filesByTime.put(str, time);
+                Log.i("Time is", time + " ");
+                cursor.close();
+            }
+            Log.i("This map", filesByTime + " is inside choice 1");
+        }
         ArrayAdapter<String> directoryList = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, fileList);
 
