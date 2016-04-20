@@ -34,8 +34,12 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class FolderView extends Activity{
 
@@ -93,7 +97,7 @@ public class FolderView extends Activity{
                 else{
                     FileListing(which);
                     //Log.i("This choice", which + " is inside while loop");
-                    Toast.makeText(FolderView.this, "finally selected", Toast.LENGTH_LONG).show();
+                    Toast.makeText(FolderView.this, "Sorted", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -109,25 +113,32 @@ public class FolderView extends Activity{
 
     void FileListing(final int choice){
         listView = (ListView) findViewById(R.id.listView);
-        ListDir(curFolder, choice);
-        //Log.i("This choice", choice + " is inside FileListing");
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Log.i("map",fileMap+" is this");
-                File selected = new File(fileMap.get(fileList.get(position)));
-                if (selected.isDirectory())
-                    ListDir(selected, choice);
-                else {
-                    // Toast.makeText(FolderView.this, selected.toString() + " selected", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(FolderView.this, PlaybackActivity.class).putExtra("filename", selected.toString());
-                    startActivity(intent);
+
+        if(curFolder == root && choice == 1)
+            Toast.makeText(FolderView.this, "Folder sorting is not allowed", Toast.LENGTH_LONG).show();
+        else{
+            ListDir(curFolder, choice);
+
+            //Log.i("This choice", choice + " is inside FileListing");
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    //Log.i("map",fileMap+" is this");
+                    File selected = new File(fileMap.get(fileList.get(position)));
+                    if (selected.isDirectory())
+                        ListDir(selected, choice);
+                    else {
+                        // Toast.makeText(FolderView.this, selected.toString() + " selected", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(FolderView.this, PlaybackActivity.class).putExtra("filename", selected.toString());
+                        startActivity(intent);
+                    }
                 }
-            }
-        });
-        Log.i("root", root + " is the directory");
+            });
+            Log.i("root", root + " is the directory");
+        }
     }
 
+    // Function to list files in the directory
     void ListDir(File f, int choice){
         if(f.equals(root))
             buttonUp.setEnabled(false);
@@ -160,22 +171,45 @@ public class FolderView extends Activity{
             Collections.sort(fileList);
         }
         if(choice == 1){
+            int drs;
+            filesByTime.clear();
             for(String str : filePath){
-                String query = "Select startTime from Recording where Filename = '" + str + "'";
+                Log.i("filePath str is", str + " ");
+                String query = "Select startTime from Recording where Filename = '" + str.substring(0,str.length()-4) + "'";
                 Cursor cursor = db.rawQuery(query, null);
                 Long time= null;
                 if(cursor != null && cursor.moveToFirst()){
                     time = cursor.getLong(cursor.getColumnIndex("startTime"));
                 }
                 filesByTime.put(str, time);
-                Log.i("Time is", time + " ");
                 cursor.close();
             }
             Log.i("This map", filesByTime + " is inside choice 1");
+            fileList = sortMapByValues(filesByTime);
         }
         ArrayAdapter<String> directoryList = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, fileList);
 
         listView.setAdapter(directoryList);
+    }
+
+    // Sorting the files based on the values in the HashMap
+    List<String> sortMapByValues(HashMap<String, Long> input){
+        List<String> al = new ArrayList<String>();
+        Set<Map.Entry<String, Long>> set = input.entrySet();
+        List<Map.Entry<String, Long>> list = new ArrayList<Map.Entry<String, Long>>(set);
+
+        Collections.sort(list, new Comparator<Map.Entry<String, Long>>() {
+            public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
+                return (o2.getValue()).compareTo(o1.getValue());
+            }
+        });
+
+        for(Map.Entry<String, Long> entry:list){
+            String file = entry.getKey();
+            int place = file.lastIndexOf("/")+1;
+            al.add(file.substring(place,file.length()-4));
+        }
+        return al;
     }
 }
