@@ -3,6 +3,9 @@ package com.example.dhiraj.mcproject;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -17,13 +20,23 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 public class GoogleMapView extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     HashMap<String,ArrayList<Double>> llMap;
+    HashMap<String,String> fileMap = new HashMap<>();
+    public static final String DATABASE_NAME = "svellangDatabase";
+    public static final String DATABASE_LOCATION = Environment.getExternalStorageDirectory() + File.separator + "Mydata" + File.separator + DATABASE_NAME;
+    SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(DATABASE_LOCATION, null);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +44,7 @@ public class GoogleMapView extends FragmentActivity implements OnMapReadyCallbac
 
         Intent intent = getIntent();
         llMap = (HashMap<String,ArrayList<Double>>)intent.getSerializableExtra("map");
+        Log.i("In GoogleMaps", llMap+" ");
 
         setContentView(R.layout.activity_google_map_view);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -56,16 +70,37 @@ public class GoogleMapView extends FragmentActivity implements OnMapReadyCallbac
         LatLng place = new LatLng(0,0);
         Marker marker;
 
-        int lat=10;
-        int lon=10;
+        String filePath = null;
+        String fileName = null;
+        int pos;
+        double lat=10.0;
+        double lon=10.0;
 
-        for(int i=0,j=0; i<10; i++,j++){
+        int i=0;
+
+        Set<String> set = llMap.keySet();
+        Iterator<String> itr = set.iterator();
+        while(itr.hasNext()){
+            filePath = itr.next();
+            pos = filePath.lastIndexOf("/")+1;
+            fileName = filePath.substring(pos, filePath.length());
+            //Log.i("file related ",fileName+" : "+filePath+" is map");
+            fileMap.put(filePath, fileName);
+            //Log.i("onMapReady ",fileMap+" is map");
+            lat = llMap.get(filePath).get(0);
+            lon = llMap.get(filePath).get(1);
+            place = new LatLng(lat+i, lon+i);
+            i = i+5;
+            marker = mMap.addMarker(new MarkerOptions().position(place).title(fileName));
+        }
+
+
+        /*for(int i=0,j=0; i<10; i++,j++){
             place = new LatLng(lat*i, lon*i);
             marker = mMap.addMarker(new MarkerOptions().position(place).title("Marker with i "+i));
-        }
+        }*/
+
         //nrp = new LatLng(14.59, 79.59);
-        //marker = mMap.addMarker(new MarkerOptions().position(nrp).title("Marker in NRP"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place, 10));
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED)
@@ -76,8 +111,30 @@ public class GoogleMapView extends FragmentActivity implements OnMapReadyCallbac
             public boolean onMarkerClick(Marker arg0) {
                 //if(arg0.getTitle().equals("Marker in NRP")) // if marker source is clicked
                 Toast.makeText(GoogleMapView.this, arg0.getTitle(), Toast.LENGTH_SHORT).show();// display toast
+                String markerName = arg0.getTitle();
+                String markerTempPath = getKeyByValue(markerName);
+                String markerPath = markerTempPath+".drs";
+                String query = "Select startTime from Recording where Filename = '" + markerPath + "'";
+                Cursor cursor = db.rawQuery(query, null);
+                Long time= null;
+                if(cursor != null && cursor.moveToFirst()){
+                    time = cursor.getLong(cursor.getColumnIndex("startTime"));
+                }
+                cursor.close();
+                Intent intent = new Intent(GoogleMapView.this, PlaybackActivity.class);
+                intent.putExtra("filename", markerPath);
+                intent.putExtra("startTime", time);
+                startActivity(intent);
                 return true;
             }
         });
+    }
+
+    String getKeyByValue(String name){
+        for (Map.Entry<String, String> entry : fileMap.entrySet()) {
+            if (name.compareTo(entry.getValue()) == 0)
+                return entry.getKey();
+        }
+        return null;
     }
 }

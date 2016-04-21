@@ -236,7 +236,7 @@ public class FolderView extends Activity{
 
         String query = "Select Filename, latitudeStart, longitudeStart from Recording";
         Cursor cursor = db.rawQuery(query, null);
-        Log.i("Cursor count", cursor.getCount() + " width "+ cursor.getColumnCount()+" is inside getGoogleHashMap");
+        //Log.i("Cursor count", cursor.getCount() + " width "+ cursor.getColumnCount()+" is inside getGoogleHashMap");
         if(cursor != null && cursor.moveToFirst()){
             while(cursor.moveToNext()){
                 list = new ArrayList<>();
@@ -250,7 +250,7 @@ public class FolderView extends Activity{
                 ghm.put(name, list);
             }
         }
-        Log.i("GHM map is ", ghm + " is inside getGoogleHashMap");
+        //Log.i("GHM map is ", ghm + " is inside getGoogleHashMap");
         return ghm;
     }
 }
