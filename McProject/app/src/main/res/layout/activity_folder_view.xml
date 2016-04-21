@@ -21,7 +21,7 @@
             android:id="@+id/up"
             android:layout_width="201dp"
             android:layout_height="wrap_content"
-            android:text="Tags"
+            android:text="Parent Folder"
             android:layout_weight="1.04" />
 
         <Button

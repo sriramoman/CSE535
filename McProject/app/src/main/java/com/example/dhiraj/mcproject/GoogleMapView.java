@@ -1,6 +1,7 @@
 package com.example.dhiraj.mcproject;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -16,13 +17,21 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class GoogleMapView extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    HashMap<String,ArrayList<Double>> llMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        llMap = (HashMap<String,ArrayList<Double>>)intent.getSerializableExtra("map");
+
         setContentView(R.layout.activity_google_map_view);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()

@@ -47,6 +47,7 @@ public class FolderView extends Activity{
     private List<String> filePath = new ArrayList<String>();
     private HashMap<String,String> fileMap = new HashMap<String, String>();
     private HashMap<String,Long> filesByTime = new HashMap<String,Long>();
+    private HashMap<String,ArrayList<Double>> googleHashMap = new HashMap<String,ArrayList<Double>>();
     Button buttonUp;
     Button buttonSort;
     TextView textView;
@@ -75,7 +76,10 @@ public class FolderView extends Activity{
             @Override
             public void onClick(View v) {
                 if(curFolder == root);
-                else ListDir(curFolder.getParentFile(), -1);
+                else{
+                    curFolder = curFolder.getParentFile();
+                    ListDir(curFolder, -1);
+                }
             }
         });
 
@@ -92,6 +96,7 @@ public class FolderView extends Activity{
             public void onClick(DialogInterface dialog, int which) {
                 if(which == 2){
                     Intent intent = new Intent(FolderView.this, GoogleMapView.class);
+                    intent.putExtra("map",getGoogleHashMap());
                     startActivity(intent);
                 }
                 else{
@@ -114,7 +119,7 @@ public class FolderView extends Activity{
     void FileListing(final int choice){
         listView = (ListView) findViewById(R.id.listView);
 
-        if(curFolder == root && choice == 1)
+        if(curFolder.compareTo(root)==0 && choice == 1)
             Toast.makeText(FolderView.this, "Folder sorting is not allowed", Toast.LENGTH_LONG).show();
         else{
             ListDir(curFolder, choice);
@@ -128,13 +133,22 @@ public class FolderView extends Activity{
                     if (selected.isDirectory())
                         ListDir(selected, choice);
                     else {
-                        // Toast.makeText(FolderView.this, selected.toString() + " selected", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(FolderView.this, PlaybackActivity.class).putExtra("filename", selected.toString());
+                        String query = "Select startTime from Recording where Filename = '" + selected.toString().substring(0, selected.toString().length()-4) + "'";
+                        Cursor cursor = db.rawQuery(query, null);
+                        Long time= null;
+                        if(cursor != null && cursor.moveToFirst()){
+                            time = cursor.getLong(cursor.getColumnIndex("startTime"));
+                        }
+                        cursor.close();
+                        //Log.i("startTime is ",time+" this");
+                        Intent intent = new Intent(FolderView.this, PlaybackActivity.class);
+                        intent.putExtra("filename", selected.toString());
+                        intent.putExtra("startTime", time);
                         startActivity(intent);
                     }
                 }
             });
-            Log.i("root", root + " is the directory");
+            //Log.i("root", root + " is the directory");
         }
     }
 
@@ -171,10 +185,9 @@ public class FolderView extends Activity{
             Collections.sort(fileList);
         }
         if(choice == 1){
-            int drs;
             filesByTime.clear();
             for(String str : filePath){
-                Log.i("filePath str is", str + " ");
+                //Log.i("filePath str is", str + " ");
                 String query = "Select startTime from Recording where Filename = '" + str.substring(0,str.length()-4) + "'";
                 Cursor cursor = db.rawQuery(query, null);
                 Long time= null;
@@ -184,7 +197,7 @@ public class FolderView extends Activity{
                 filesByTime.put(str, time);
                 cursor.close();
             }
-            Log.i("This map", filesByTime + " is inside choice 1");
+            //Log.i("This map", filesByTime + " is inside choice 1");
             fileList = sortMapByValues(filesByTime);
         }
         ArrayAdapter<String> directoryList = new ArrayAdapter<String>(this,
@@ -211,5 +224,33 @@ public class FolderView extends Activity{
             al.add(file.substring(place,file.length()-4));
         }
         return al;
+    }
+
+    // Collecting records with attributes FileName, Latitute and Longitude
+    HashMap<String,ArrayList<Double>> getGoogleHashMap(){
+        HashMap<String,ArrayList<Double>> ghm = new HashMap<>();
+        ArrayList<Double> list = new ArrayList<>();
+        String name = null;
+        double lati = 10.0;
+        double longi = 10.0;
+
+        String query = "Select Filename, latitudeStart, longitudeStart from Recording";
+        Cursor cursor = db.rawQuery(query, null);
+        Log.i("Cursor count", cursor.getCount() + " width "+ cursor.getColumnCount()+" is inside getGoogleHashMap");
+        if(cursor != null && cursor.moveToFirst()){
+            while(cursor.moveToNext()){
+                list = new ArrayList<>();
+                name = cursor.getString(cursor.getColumnIndex("Filename"));
+                lati = cursor.getInt(cursor.getColumnIndex("latitudeStart"));
+                longi = cursor.getInt(cursor.getColumnIndex("longitudeStart"));
+                //Log.i("GHM latilongi are  ", lati+" and "+longi + " is inside getGoogleHashMap");
+                list.add(lati);
+                list.add(longi);
+                //Log.i("GHM list are  ", list + " is inside getGoogleHashMap");
+                ghm.put(name, list);
+            }
+        }
+        Log.i("GHM map is ", ghm + " is inside getGoogleHashMap");
+        return ghm;
     }
 }
