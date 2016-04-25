@@ -26,6 +26,7 @@ public class HomeScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
+        getSupportActionBar().setTitle("Smart Voice Recorder | Dashboard");
         File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata");
         if (!folder.exists()) {
             folder.mkdir();

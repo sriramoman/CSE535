@@ -18,6 +18,7 @@ import android.provider.Settings;
 
 import android.os.Bundle;
 
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
 import android.view.View;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 
-public class MainActivity extends Activity
+public class MainActivity extends AppCompatActivity
 {
     LinearLayout layout;
     VisualizerView mVisualizer;
@@ -67,6 +68,9 @@ public class MainActivity extends Activity
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         filename = getIntent().getStringExtra("filename");
+        String[] fnames = filename.split("/");
+        String fname = fnames[fnames.length-1];
+        getSupportActionBar().setTitle("Record " + fname);
         curPath=getIntent().getStringExtra("curFolder");
         Log.e(LOG_TAG, "path is "+curPath);
         setContentView(R.layout.activity_main);
