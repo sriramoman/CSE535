@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -48,8 +49,13 @@ public class FolderView extends Activity{
     private HashMap<String,String> fileMap = new HashMap<String, String>();
     private HashMap<String,Long> filesByTime = new HashMap<String,Long>();
     private HashMap<String,ArrayList<Double>> googleHashMap = new HashMap<String,ArrayList<Double>>();
+    private boolean blRename;
     Button buttonUp;
     Button buttonSort;
+    //svellang
+    Button buttonRename;
+    private int lastChoice;
+
     TextView textView;
     ListView listView;
     public static final String DATABASE_NAME = "svellangDatabase";
@@ -64,10 +70,17 @@ public class FolderView extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_folder_view);
-
+        blRename=false;
         root = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata");
-        //root = new File("/storage/emulated/0/Mydata");
         curFolder = root;
+
+        buttonRename = (Button)findViewById(R.id.btnrename);
+        buttonRename.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                setBlRename(!blRename);
+            }
+        });
 
         textView = (TextView) findViewById(R.id.folder);
         // Button to reach the parent directory
@@ -116,11 +129,33 @@ public class FolderView extends Activity{
         });
     }
 
+    /**
+     * Setter method for blRename (Heavy)
+     * Param: Boolean
+     */
+    public void setBlRename(boolean blVal){
+        blRename=blVal;
+        if (blRename) {
+            buttonRename.setText("Cancel");
+            if (curFolder.compareTo(root)==0)
+                textView.setText("Tap on tag to rename");
+            else
+                textView.setText("Tap on recording to rename");
+        }
+        else {
+            buttonRename.setText("Rename");
+            if (curFolder.compareTo(root)==0)
+                textView.setText("Tags");
+            else
+                textView.setText(curFolder.getAbsolutePath().substring(curFolder.getAbsolutePath().lastIndexOf("/")+1)+" > Recordings");
+        }
+    }
+
     void FileListing(final int choice){
         listView = (ListView) findViewById(R.id.listView);
 
         if(curFolder.compareTo(root)==0 && choice == 1)
-            Toast.makeText(FolderView.this, "Folder sorting is not allowed", Toast.LENGTH_LONG).show();
+            Toast.makeText(FolderView.this, "Folder sorting by time is not allowed", Toast.LENGTH_LONG).show();
         else{
             ListDir(curFolder, choice);
 
@@ -130,22 +165,22 @@ public class FolderView extends Activity{
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     //Log.i("map",fileMap+" is this");
                     File selected = new File(fileMap.get(fileList.get(position)));
-                    if (selected.isDirectory())
-                        ListDir(selected, choice);
+                    if (blRename)
+                        rename(selected);
                     else {
-                        String query = "Select startTime from Recording where Filename = '" + selected.toString().substring(0, selected.toString().length()-4) + "'";
-                        Cursor cursor = db.rawQuery(query, null);
-                        Long time= null;
-                        if(cursor != null && cursor.moveToFirst()){
-                            time = cursor.getLong(cursor.getColumnIndex("startTime"));
-                        }
-                        cursor.close();
-                        //Log.i("startTime is ",time+" this");
-                        Intent intent = new Intent(FolderView.this, PlaybackActivity.class);
-                        intent.putExtra("filename", selected.toString());
-                        intent.putExtra("startTime", String.valueOf(time));
+                        if (selected.isDirectory()) {
+                            ListDir(selected, choice);
+                        } else {
+                            String query = "Select startTime from Recording where Filename = '" + selected.toString().substring(0, selected.toString().length() - 4) + "'";
+                            Cursor cursor = db.rawQuery(query, null);
+                            Long time = null;
+                            if (cursor != null && cursor.moveToFirst()) {
+                                time = cursor.getLong(cursor.getColumnIndex("startTime"));
+                            }
+                            cursor.close();
+                            //Log.i("startTime is ",time+" this");
+                            Intent intent = new Intent(FolderView.this, PlaybackActivity.class);
 
-                        startActivity(intent);
                     }
                 }
             });
@@ -155,15 +190,12 @@ public class FolderView extends Activity{
 
     // Function to list files in the directory
     void ListDir(File f, int choice){
-        if(f.equals(root))
             buttonUp.setEnabled(false);
-        else
             buttonUp.setEnabled(true);
 
         curFolder = f;
         int pos;
         int lastPos;
-        textView.setText(f.getPath());
 
         File[] files = f.listFiles();
         fileMap.clear();

@@ -5,39 +5,56 @@
     android:layout_height="match_parent"
     android:minWidth="300dp">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:weightSum="1">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher"/>
+        android:rowCount="1"
+        android:columnCount="3">
 
         <Button
             android:id="@+id/up"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tags"
-            android:layout_weight="1.04" />
+            android:drawableLeft="@drawable/tag"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_gravity="center_vertical|fill_vertical"
+            android:textSize="14dp" />
+
+        <Button
+            android:id="@+id/btnrename"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rename"
+            android:drawableLeft="@drawable/rename"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_gravity="center_vertical|fill_vertical"
+            android:textSize="14dp" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/filter"
             android:text="View By"
-            android:id="@+id/sort" />
+            android:id="@+id/sort"
+            android:layout_row="0"
+            android:layout_column="2"
+            android:layout_gravity="center_vertical|right|fill_vertical"
+            android:textSize="14dp" />
 
-    </LinearLayout>
+    </GridLayout>
 
     <TextView
         android:id="@+id/folder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="invisible" />
+        android:visibility="visible"
+        android:text="Tags"
+        android:textColor="#000000"
+        android:textSize="20dp" />
 
     <ListView
         android:id="@+id/listView"

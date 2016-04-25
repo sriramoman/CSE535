@@ -125,7 +125,7 @@ public class RecordService extends Service implements LocationListener {
     }
     private void saveHooks() {
         try {
-            File myFile = new File(filename +"$.txt");
+            File myFile = new File("hook$.txt");
             myFile.createNewFile();
             FileOutputStream fOut = new FileOutputStream(myFile);
             ObjectOutputStream s = new ObjectOutputStream(fOut);
@@ -135,7 +135,7 @@ public class RecordService extends Service implements LocationListener {
             fOut.close();
 
             //<editor-fold desc="svellangGraph">
-            myFile = new File(filename +"~.txt");
+            myFile = new File("wav~.txt");
             myFile.createNewFile();
             fOut = new FileOutputStream(myFile);
             s = new ObjectOutputStream(fOut);
@@ -145,9 +145,9 @@ public class RecordService extends Service implements LocationListener {
             mapLevels.clear();
             //</editor-fold>
             String[] allFiles = new String[3];
-            allFiles[0] = filename + ".3gp";
-            allFiles[1] = filename + "$.txt";
-            allFiles[2] = filename + "~.txt";
+            allFiles[0] = "rec.3gp";
+            allFiles[1] = "hook$.txt";
+            allFiles[2] = "wav~.txt";
 
             Compress compress = new Compress(allFiles,filename);
             compress.zip();
@@ -186,7 +186,7 @@ public class RecordService extends Service implements LocationListener {
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setOutputFile(mFileName + ".3gp");
+        mRecorder.setOutputFile("rec.3gp");
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         finalFileName = mFileName;
 

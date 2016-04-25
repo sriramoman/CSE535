@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -69,6 +68,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
     private int hookColor;
     private int graphColor;
     private int highlightColor;
+    private String currFolder;
     ImageButton downloadButton;
     String downloadPath;
     @Override
@@ -96,10 +96,12 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         filePath = filePath.substring(0, filePath.length() - 4);
         String[]tokens = filePath.split("/");
         filename = tokens[tokens.length-1];
+        currFolder=filePath.replace(filename, "");
+
         filePrefix = tokens[tokens.length-2]+"_";
-        allFiles[0] = filePath + ".3gp";
-        allFiles[1] = filePath + "$.txt";
-        allFiles[2] = filePath + "~.txt";
+        allFiles[0] = "rec.3gp";
+        allFiles[1] = "hook$.txt";
+        allFiles[2] = "wav~.txt";
         playerPaused=false;
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         btnPlay = (ImageButton)findViewById(R.id.btnPlay);
@@ -156,9 +158,9 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                 }
                 index = index + 1;
 
-                String sourcePath = allFiles[0];
+                String sourcePath = currFolder+allFiles[0];
                 File source = new File(sourcePath);
-                String recordName = allFiles[0].substring(index, allFiles[0].length());
+                String recordName = filename+".3gp";
                 String destinationPath = downloadPath;
                 File destination = new File(destinationPath+"/"+filePrefix+recordName);
                 try
@@ -171,7 +173,6 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                 {
                     e.printStackTrace();
                 }
-                //promptSpeechInput();
             }
         });
 
@@ -235,7 +236,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                         {
                             btnPlay.setImageDrawable(getResources().getDrawable(R.drawable.pause));
                             try {
-                                final Uri myUri = Uri.parse(filePath + ".3gp");
+                                final Uri myUri = Uri.parse(currFolder + "rec.3gp");
                                 mediaPlayer.setDataSource(getApplicationContext(), myUri);
                                 mediaPlayer.prepareAsync();
                             } catch (IOException e) {
@@ -332,7 +333,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         RelativeLayout rootLayout = (RelativeLayout)findViewById(R.id.rootLayout);
 
 
-        Toast.makeText(getBaseContext(), String.valueOf(recordStartTime), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getBaseContext(), String.valueOf(recordStartTime), Toast.LENGTH_SHORT).show();
         if(recordStartTime>=20 && recordStartTime<=25 || recordStartTime>=0 && recordStartTime<7){
             //Night
             bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
@@ -381,19 +382,17 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
 
 
 
-        File file = new File(filePath+"~.txt");
+        File file = new File(currFolder+"wav~.txt");
         FileInputStream f = new FileInputStream(file);
         ObjectInputStream s = new ObjectInputStream(f);
         LinkedHashMap<Number,Number> mapLevels  = (LinkedHashMap<Number,Number>) s.readObject();
         s.close();
         f.close();
 
-        file = new File(filePath+"$.txt");
+        file = new File(currFolder+"hook$.txt");
         f = new FileInputStream(file);
         s = new ObjectInputStream(f);
         mapHooks  = (LinkedHashMap<Number,String>) s.readObject();
-//        String hookList = mapHooks.toString().replaceAll(", ","\n").replaceAll("=",":").replaceAll("\\{","").replaceAll("\\}","");
-//        Log.d("Time", hookList);
         s.close();
         f.close();
 
@@ -506,7 +505,6 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                     boolean blHookFoundAhead=false;
                     for (i=0;i<timeHooks.size();i++){
                         Number hookTime=timeHooks.get(i);
-//                        Log.d("Hooktime",hookTime.toString());
                         if (startTime>=hookTime.doubleValue()) {
                             blHookFoundBehind=true;
                             hookedText.setText(mapHooks.get(hookTime));
@@ -558,6 +556,8 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         super.onDestroy();
         Log.d("onDestroy","Gonna stop");
         stopPlayer();
+        for (int i=0;i<3;i++)
+            allFiles[i]=currFolder+allFiles[i];
         Compress compress = new Compress(allFiles,filePath+".drs");
         compress.deleteFiles(allFiles);
     }
