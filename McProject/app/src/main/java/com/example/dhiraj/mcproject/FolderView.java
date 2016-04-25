@@ -180,7 +180,12 @@ public class FolderView extends Activity{
                             cursor.close();
                             //Log.i("startTime is ",time+" this");
                             Intent intent = new Intent(FolderView.this, PlaybackActivity.class);
+                            Log.d("FolderView=>filename",selected.toString());
+                            intent.putExtra("filename", selected.toString());
+                            intent.putExtra("startTime", String.valueOf(time));
 
+                            startActivity(intent);
+                        }
                     }
                 }
             });
@@ -188,14 +193,66 @@ public class FolderView extends Activity{
         }
     }
 
+    void rename(final File selected){
+        AlertDialog.Builder builder = new AlertDialog.Builder(FolderView.this);
+        builder.setTitle("Rename");
+
+        // Set up the input
+        final EditText input = new EditText(FolderView.this);
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        //input.setInputType(InputType.TYPE_CLASS_TEXT );
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //<editor-fold desc="Rename">
+                File renameTo;
+                String ext=selected.isDirectory()?"":".drs";
+                renameTo = new File(curFolder.toString()+"/"+input.getText().toString()+ext);
+                selected.renameTo(renameTo);
+                ListDir(curFolder,lastChoice);
+                //TODO Rename files in database
+                String srcVal = selected.getAbsolutePath().replace(ext,"");
+                String query ="update Recording set Filename=replace(Filename,'"+srcVal+"','"+curFolder.toString()+"/"+input.getText().toString()+"')";
+                Log.d("Q::", query);
+                db.execSQL(query);
+                setBlRename(!blRename);
+            }
+
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                setBlRename(!blRename);
+            }
+        });
+
+        builder.show();
+    }
+
     // Function to list files in the directory
     void ListDir(File f, int choice){
+        lastChoice=choice;
+        if(f.equals(root)) {
+            if (blRename){
+                textView.setText("Tap on tag to rename");
+            }
+            else
+                textView.setText("Tags");
             buttonUp.setEnabled(false);
+        }
+        else {
+            textView.setText(f.getPath().substring(f.getPath().lastIndexOf("/")+1)+" > Recordings");
             buttonUp.setEnabled(true);
+        }
 
         curFolder = f;
         int pos;
         int lastPos;
+//        textView.setText(f.getPath());
 
         File[] files = f.listFiles();
         fileMap.clear();
