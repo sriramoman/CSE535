@@ -70,13 +70,6 @@ public class MainActivity extends Activity
         curPath=getIntent().getStringExtra("curFolder");
         Log.e(LOG_TAG, "path is "+curPath);
         setContentView(R.layout.activity_main);
-        //startAlarm();
-//        code to decompress
-//        Compress compress = new Compress();
-//        boolean t = compress.unpackZip("/storage/sdcard0/Mydata/Aw/","Popo.zip");
-
-
-
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -113,6 +106,7 @@ public class MainActivity extends Activity
 //            Toast.makeText(getBaseContext(),"Service is running",Toast.LENGTH_SHORT).show();
             if(RecordService.recordingOn == 1) {
                 filename = RecordService.recordingPath;
+                starttime = RecordService.starttime;
                 startBtn.setEnabled(false);
                 stopBtn.setEnabled(true);
                 hookBtn.setEnabled(true);
@@ -132,6 +126,7 @@ public class MainActivity extends Activity
 
                 else{
                     Intent intent = new Intent(MainActivity.this, PlaybackActivity.class).putExtra("filename",filename+".drs");
+                    intent.putExtra("startTime", String.valueOf(starttime));
                     startActivity(intent);
 
                 }

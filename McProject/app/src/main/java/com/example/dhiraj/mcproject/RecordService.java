@@ -64,7 +64,7 @@ public class RecordService extends Service implements LocationListener {
     public static final String DATABASE_NAME = "svellangDatabase";
     public static final String DATABASE_LOCATION = Environment.getExternalStorageDirectory() + File.separator + "Mydata" + File.separator + DATABASE_NAME;
     public static String TABLE = "Recording";
-    long starttime = 0;
+    public static long starttime = 0;
     Location location; // location
     double latitude; // latitude
     double longitude; // longitude
