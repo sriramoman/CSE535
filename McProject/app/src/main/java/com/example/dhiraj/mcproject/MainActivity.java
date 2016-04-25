@@ -80,7 +80,7 @@ public class MainActivity extends Activity
         isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
         if (!isGPSEnabled) {
-            //showSettingsAlert();
+            showSettingsAlert();
         }
 
         layout = (LinearLayout) findViewById(R.id.lay);

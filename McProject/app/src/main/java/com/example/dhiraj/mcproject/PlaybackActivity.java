@@ -39,6 +39,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -46,6 +47,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
 
     private double startTime = 0;
     private double finalTime = 0;
+    private int recordStartTime = 0;
     private Handler myHandler = new Handler();
     final private MediaPlayer mediaPlayer = new MediaPlayer();
     private SeekBar playBar;
@@ -74,12 +76,16 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playback);
         filePath = getIntent().getStringExtra("filename");
+        long sttime = Long.parseLong(getIntent().getStringExtra("startTime"));
+        Calendar time = Calendar.getInstance();
+        time.setTimeInMillis(sttime);
+        recordStartTime=time.get(Calendar.HOUR_OF_DAY);
+
         Compress c = new Compress();
         c.unpackZip(filePath);
         downloadButton = (ImageButton)findViewById(R.id.downloadButton);
         //<editor-fold desc="Initialize objects">
         downloadPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SmartRecorderDownloads";
-        //filePath=Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata/"+"mc/";
         File folder = new File(downloadPath);
         if (!folder.exists()) {
             folder.mkdir();
@@ -326,42 +332,46 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         RelativeLayout rootLayout = (RelativeLayout)findViewById(R.id.rootLayout);
 
 
-        //Morning
-        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#64B2DF")));
-        rootLayout.setBackgroundColor(getResources().getColor(R.color.colorMorning));
-        hookColor = Color.rgb(150, 10, 10);
-        graphColor = Color.rgb(72,170,255);
-        highlightColor = Color.argb(122,255,255,122);
-        amplitudeChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTH_SIDED);
+        Toast.makeText(getBaseContext(), String.valueOf(recordStartTime), Toast.LENGTH_SHORT).show();
+        if(recordStartTime>=20 && recordStartTime<=25 || recordStartTime>=0 && recordStartTime<7){
+            //Night
+            bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
+            rootLayout.setBackgroundColor(getResources().getColor(R.color.colorNight));
+            hookColor = Color.rgb(255, 255, 0);
+            graphColor = Color.rgb(220, 220, 220);
+            highlightColor = Color.argb(100, 255, 160, 122);
+            amplitudeChart.getAxisLeft().setAxisLineColor(Color.WHITE);
+            amplitudeChart.getAxisRight().setAxisLineColor(Color.WHITE);
+            amplitudeChart.getXAxis().setTextColor(Color.WHITE);
+            amplitudeChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTH_SIDED);
+            amplitudeChart.getXAxis().setAxisLineColor(Color.WHITE);
+            hookedText.setTextColor(Color.WHITE);
+        }
+        else if (recordStartTime>=7 && recordStartTime<16) {
+            //Day time (Morning or afternoon)
+            bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#64B2DF")));
+            rootLayout.setBackgroundColor(getResources().getColor(R.color.colorMorning));
+            hookColor = Color.rgb(150, 10, 10);
+            graphColor = Color.rgb(72, 170, 255);
+            highlightColor = Color.argb(122, 255, 255, 122);
+            amplitudeChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTH_SIDED);
+        }
+        else {
+            //Evening
+            bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#24207A")));
+            rootLayout.setBackgroundColor(getResources().getColor(R.color.colorEvening));
+            hookColor = Color.rgb(255, 255, 0);
+            graphColor = Color.rgb(0, 255, 122);
+            highlightColor = Color.argb(100, 255, 160, 122);
+            amplitudeChart.getAxisLeft().setAxisLineColor(Color.rgb(220, 220, 220));
+            amplitudeChart.getAxisRight().setAxisLineColor(Color.rgb(220, 220, 220));
+            amplitudeChart.getXAxis().setTextColor(Color.rgb(220, 220, 220));
+            amplitudeChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTH_SIDED);
+            amplitudeChart.getXAxis().setAxisLineColor(Color.rgb(220, 220, 220));
+            hookedText.setTextColor(Color.rgb(220, 220, 220));
+        }
 
 
-
-
-//        //Evening
-//        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#24207A")));
-//        rootLayout.setBackgroundColor(getResources().getColor(R.color.colorEvening));
-//        hookColor = Color.rgb(255, 255, 0);
-//        graphColor = Color.rgb(0, 255, 122);
-//        highlightColor = Color.argb(100, 255, 160, 122);
-//        amplitudeChart.getAxisLeft().setAxisLineColor(Color.rgb(220, 220, 220));
-//        amplitudeChart.getAxisRight().setAxisLineColor(Color.rgb(220, 220, 220));
-//        amplitudeChart.getXAxis().setTextColor(Color.rgb(220, 220, 220));
-//        amplitudeChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTH_SIDED);
-//        amplitudeChart.getXAxis().setAxisLineColor(Color.rgb(220, 220, 220));
-//        hookedText.setTextColor(Color.rgb(220, 220, 220));
-
-//        //Night
-//        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000000")));
-//        rootLayout.setBackgroundColor(getResources().getColor(R.color.colorNight));
-//        hookColor = Color.rgb(255, 255, 0);
-//        graphColor = Color.rgb(220, 220, 220);
-//        highlightColor = Color.argb(100, 255, 160, 122);
-//        amplitudeChart.getAxisLeft().setAxisLineColor(Color.WHITE);
-//        amplitudeChart.getAxisRight().setAxisLineColor(Color.WHITE);
-//        amplitudeChart.getXAxis().setTextColor(Color.WHITE);
-//        amplitudeChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTH_SIDED);
-//        amplitudeChart.getXAxis().setAxisLineColor(Color.WHITE);
-//        hookedText.setTextColor(Color.WHITE);
 
 
     }
