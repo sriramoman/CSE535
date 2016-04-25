@@ -143,7 +143,8 @@ public class FolderView extends Activity{
                         //Log.i("startTime is ",time+" this");
                         Intent intent = new Intent(FolderView.this, PlaybackActivity.class);
                         intent.putExtra("filename", selected.toString());
-                        intent.putExtra("startTime", time);
+                        intent.putExtra("startTime", String.valueOf(time));
+
                         startActivity(intent);
                     }
                 }
