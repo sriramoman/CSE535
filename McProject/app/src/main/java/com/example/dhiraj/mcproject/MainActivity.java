@@ -110,9 +110,10 @@ public class MainActivity extends Activity
         {
 //            Toast.makeText(getBaseContext(),"Service is running",Toast.LENGTH_SHORT).show();
             if(RecordService.recordingOn == 1) {
-
+                filename = RecordService.recordingPath;
                 startBtn.setEnabled(false);
                 stopBtn.setEnabled(true);
+                hookBtn.setEnabled(true);
             }
         }
         startBtn.setOnClickListener(new View.OnClickListener() {
