@@ -55,6 +55,7 @@ public class RecordService extends Service implements LocationListener {
 //    private String ampList;
     // flag for network status
     boolean isNetworkEnabled = false;
+    public static String recordingPath;
     private static String mFileName = null;
     // flag for GPS status
     boolean canGetLocation = false;
@@ -164,6 +165,7 @@ public class RecordService extends Service implements LocationListener {
 
     private void startRecording(String mFileName) {
         getLocation();
+        recordingPath = mFileName;
         if(location != null){
             latitudeStart = latitude;
             longitudeStart = longitude;
