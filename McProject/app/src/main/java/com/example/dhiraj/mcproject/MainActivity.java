@@ -60,13 +60,15 @@ public class MainActivity extends Activity
     String hookText;
     private String filename = "";
     int playmode = 0;
+    private String curPath;
     //</editor-fold>
     @Override
 
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         filename = getIntent().getStringExtra("filename");
-        Log.e(LOG_TAG, "filename is "+filename);
+        curPath=getIntent().getStringExtra("curFolder");
+        Log.e(LOG_TAG, "path is "+curPath);
         setContentView(R.layout.activity_main);
         //startAlarm();
 //        code to decompress
@@ -187,6 +189,7 @@ public class MainActivity extends Activity
         Bundle b = new Bundle();
         String filePath = filename;
         b.putString("str1", filePath);
+        b.putString("curPath",curPath);
         Message msg = Message.obtain(null, 1);
         msg.setData(b);
         // Create and send a message to the service, using a supported 'what' value

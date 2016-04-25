@@ -77,6 +77,7 @@ public class RecordService extends Service implements LocationListener {
     double latitudeEnd; // latitude
     String cityEnd;
     private String finalFileName;
+    private static String curPath;
     // The minimum distance to change Updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0; // 10 meters
     Notification recordingNotify;
@@ -95,6 +96,7 @@ public class RecordService extends Service implements LocationListener {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
+                    curPath=msg.getData().getString("curPath");
                     String s = msg.getData().getString("str1");
                     filename = s;
 //                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
@@ -125,7 +127,7 @@ public class RecordService extends Service implements LocationListener {
     }
     private void saveHooks() {
         try {
-            File myFile = new File("hook$.txt");
+            File myFile = new File(curPath+"hook$.txt");
             myFile.createNewFile();
             FileOutputStream fOut = new FileOutputStream(myFile);
             ObjectOutputStream s = new ObjectOutputStream(fOut);
@@ -135,7 +137,7 @@ public class RecordService extends Service implements LocationListener {
             fOut.close();
 
             //<editor-fold desc="svellangGraph">
-            myFile = new File("wav~.txt");
+            myFile = new File(curPath+"wav~.txt");
             myFile.createNewFile();
             fOut = new FileOutputStream(myFile);
             s = new ObjectOutputStream(fOut);
@@ -145,9 +147,9 @@ public class RecordService extends Service implements LocationListener {
             mapLevels.clear();
             //</editor-fold>
             String[] allFiles = new String[3];
-            allFiles[0] = "rec.3gp";
-            allFiles[1] = "hook$.txt";
-            allFiles[2] = "wav~.txt";
+            allFiles[0] = curPath+"rec.3gp";
+            allFiles[1] = curPath+"hook$.txt";
+            allFiles[2] = curPath+"wav~.txt";
 
             Compress compress = new Compress(allFiles,filename);
             compress.zip();
@@ -181,12 +183,12 @@ public class RecordService extends Service implements LocationListener {
         Log.e(LOG_TAG, timestampStart);
 
         System.out.print(mFileName);
-        Log.e(LOG_TAG, mFileName);
+        Log.e(LOG_TAG, curPath+"rec.3gp");
 
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setOutputFile("rec.3gp");
+        mRecorder.setOutputFile(curPath+"rec.3gp");
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         finalFileName = mFileName;
 

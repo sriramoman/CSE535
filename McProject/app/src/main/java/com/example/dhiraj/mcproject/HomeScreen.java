@@ -91,6 +91,7 @@ public class HomeScreen extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 filename = input.getText().toString();
                 Intent intent = new Intent(HomeScreen.this, MainActivity.class).putExtra("filename",m_chosenDir + File.separator + filename);
+                intent.putExtra("curFolder",m_chosenDir+File.separator);
                 startActivity(intent);
             }
 

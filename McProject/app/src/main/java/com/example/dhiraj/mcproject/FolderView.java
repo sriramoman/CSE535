@@ -180,7 +180,6 @@ public class FolderView extends Activity{
                             cursor.close();
                             //Log.i("startTime is ",time+" this");
                             Intent intent = new Intent(FolderView.this, PlaybackActivity.class);
-                            Log.d("FolderView=>filename",selected.toString());
                             intent.putExtra("filename", selected.toString());
                             intent.putExtra("startTime", String.valueOf(time));
 
