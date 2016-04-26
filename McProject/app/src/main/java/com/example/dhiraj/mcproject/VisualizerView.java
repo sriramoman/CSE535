@@ -57,15 +57,15 @@ public class VisualizerView extends View {
         int width = this.getWidth();
         int height = this.getHeight();
         Log.e("hi"," "+height+ " "+ width);
-        mForePaint.setColor(Color.GRAY);
+        mForePaint.setColor(Color.rgb(100, 200, 235));
         canvas.drawCircle(width / 2, height / 2, oldRadius + 84, mForePaint);
 
         mForePaint.setColor(Color.rgb(220, 20, 60));
         canvas.drawCircle(width / 2, height / 2, mRadius + 84, mForePaint);
 
-        Bitmap b= BitmapFactory.decodeResource(getResources(), R.drawable.voice);
-        //p.setColor(Color.RED);
-        canvas.drawBitmap(b,(width / 2) - 64 , (height / 2) - 64 , mForePaint);
+//        Bitmap b= BitmapFactory.decodeResource(getResources(), R.drawable.voice);
+//        //p.setColor(Color.RED);
+//        canvas.drawBitmap(b,(width / 2) - 64 , (height / 2) - 64 , mForePaint);
     }
 
 }

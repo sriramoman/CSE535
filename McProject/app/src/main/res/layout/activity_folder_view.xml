@@ -3,7 +3,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:minWidth="300dp">
+    android:minWidth="300dp"
+    android:background="@drawable/micropone">
 
     <GridLayout
         android:layout_width="match_parent"
@@ -50,6 +51,7 @@
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
+        android:layout_height="wrap_content"
+        android:background="#c2f0f0f0"></ListView>
 
 </LinearLayout>

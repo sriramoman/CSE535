@@ -11,26 +11,39 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.dhiraj.mcproject.HomeScreen"
     tools:showIn="@layout/activity_home_screen"
-    android:background="@drawable/micropone"
-    android:backgroundTint="#44ffffff"
-    android:backgroundTintMode="screen">
+    android:background="@drawable/micropone">
 
-    <Button
-        android:layout_width="wrap_content"
+    <GridLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="New Recording"
-        android:id="@+id/newRecording"
-        android:layout_alignTop="@+id/viewRecording"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="View Recordings"
-        android:id="@+id/viewRecording"
+        android:columnCount="7"
+        android:rowCount="3"
         android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:background="#88888888">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Recording"
+            android:id="@+id/newRecording"
+            android:layout_alignTop="@+id/viewRecording"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:layout_gravity="left" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View Recordings"
+            android:id="@+id/viewRecording"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_row="1"
+            android:layout_column="6"
+            android:layout_gravity="right" />
+    </GridLayout>
 
 </RelativeLayout>
