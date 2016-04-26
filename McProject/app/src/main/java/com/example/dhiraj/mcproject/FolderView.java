@@ -4,30 +4,20 @@ package com.example.dhiraj.mcproject;
  * Created by RK on 4/17/2016.
  */
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ListActivity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,12 +27,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class FolderView extends Activity{
+public class FolderView extends AppCompatActivity{
 
     private List<String> fileList = new ArrayList<String>();
     private List<String> filePath = new ArrayList<String>();
@@ -56,7 +45,6 @@ public class FolderView extends Activity{
     Button buttonRename;
     private int lastChoice;
 
-    TextView textView;
     ListView listView;
     public static final String DATABASE_NAME = "svellangDatabase";
     public static final String DATABASE_LOCATION = Environment.getExternalStorageDirectory() + File.separator + "Mydata" + File.separator + DATABASE_NAME;
@@ -70,6 +58,7 @@ public class FolderView extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_folder_view);
+        getSupportActionBar().setTitle("Tags");
         blRename=false;
         root = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Mydata");
         curFolder = root;
@@ -82,7 +71,6 @@ public class FolderView extends Activity{
             }
         });
 
-        textView = (TextView) findViewById(R.id.folder);
         // Button to reach the parent directory
         buttonUp = (Button) findViewById(R.id.up);
         buttonUp.setOnClickListener(new View.OnClickListener(){
@@ -138,16 +126,16 @@ public class FolderView extends Activity{
         if (blRename) {
             buttonRename.setText("Cancel");
             if (curFolder.compareTo(root)==0)
-                textView.setText("Tap on tag to rename");
+                getSupportActionBar().setTitle("Tap on tag to rename");
             else
-                textView.setText("Tap on recording to rename");
+                getSupportActionBar().setTitle("Tap on recording to rename");
         }
         else {
             buttonRename.setText("Rename");
             if (curFolder.compareTo(root)==0)
-                textView.setText("Tags");
+                getSupportActionBar().setTitle("Tags");
             else
-                textView.setText(curFolder.getAbsolutePath().substring(curFolder.getAbsolutePath().lastIndexOf("/")+1)+" > Recordings");
+                getSupportActionBar().setTitle(curFolder.getAbsolutePath().substring(curFolder.getAbsolutePath().lastIndexOf("/") + 1) + " > Recordings");
         }
     }
 
@@ -237,14 +225,14 @@ public class FolderView extends Activity{
         lastChoice=choice;
         if(f.equals(root)) {
             if (blRename){
-                textView.setText("Tap on tag to rename");
+                getSupportActionBar().setTitle("Tap on tag to rename");
             }
             else
-                textView.setText("Tags");
+                getSupportActionBar().setTitle("Tags");
             buttonUp.setEnabled(false);
         }
         else {
-            textView.setText(f.getPath().substring(f.getPath().lastIndexOf("/")+1)+" > Recordings");
+            getSupportActionBar().setTitle(f.getPath().substring(f.getPath().lastIndexOf("/")+1)+" > Recordings");
             buttonUp.setEnabled(true);
         }
 

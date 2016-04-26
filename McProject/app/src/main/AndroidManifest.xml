@@ -37,19 +37,17 @@
 
         <activity
             android:name=".HomeScreen"
-            android:label="@string/title_activity_home_screen"
-            android:theme="@style/AppTheme.NoActionBar">
-
+            android:label="@string/title_activity_home_screen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".FolderView"
-            android:label="Folder View"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:label="Folder View" >
             </activity>
 
         <!--
@@ -71,7 +69,11 @@
             android:name=".LoginActivity"
             android:label="@string/title_activity_login">
         </activity>
-
+        <activity
+            android:name=".NumberLock"
+            android:label="@string/title_activity_number_lock"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
