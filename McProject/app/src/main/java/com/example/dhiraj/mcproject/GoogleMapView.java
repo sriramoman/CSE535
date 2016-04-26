@@ -89,8 +89,8 @@ public class GoogleMapView extends FragmentActivity implements OnMapReadyCallbac
             //Log.i("onMapReady ",fileMap+" is map");
             lat = llMap.get(filePath).get(0);
             lon = llMap.get(filePath).get(1);
-            place = new LatLng(lat+i, lon+i);
-            i = i+5;
+            place = new LatLng(lat, lon);
+            //i = i+5;
             marker = mMap.addMarker(new MarkerOptions().position(place).title(fileName));
         }
 
@@ -113,17 +113,38 @@ public class GoogleMapView extends FragmentActivity implements OnMapReadyCallbac
                 Toast.makeText(GoogleMapView.this, arg0.getTitle(), Toast.LENGTH_SHORT).show();// display toast
                 String markerName = arg0.getTitle();
                 String markerTempPath = getKeyByValue(markerName);
-                String markerPath = markerTempPath+".drs";
+                String markerPath = markerTempPath;
+                Log.i("Marker Path ",markerTempPath+" ");
                 String query = "Select startTime from Recording where Filename = '" + markerPath + "'";
+                Log.i("Marker query ",query+" ");
+                /*Cursor cursor = db.rawQuery(query, null);
+                String time1= null;
+                if(cursor != null){
+                    while(cursor.moveToNext()){
+                        Log.i("Marker Path ", "cursor found somethjuing" + " ");
+                        time1 = cursor.getString(cursor.getColumnIndex("startTime"));
+                    }
+
+                }
+                Log.i("Marker Path ", time1 + " ");
+                long time = Long.parseLong(time1);
+                cursor.close();*/
+
+
                 Cursor cursor = db.rawQuery(query, null);
-                Long time= null;
-                if(cursor != null && cursor.moveToFirst()){
+                Long time = null;
+                if (cursor != null && cursor.moveToFirst()) {
+                    Log.i("Marker Path ", "cursor found somethjuing" + " ");
                     time = cursor.getLong(cursor.getColumnIndex("startTime"));
                 }
+                Log.i("Marker Path ", time + " ");
                 cursor.close();
+
+
+                markerPath = markerTempPath+".drs";
                 Intent intent = new Intent(GoogleMapView.this, PlaybackActivity.class);
                 intent.putExtra("filename", markerPath);
-                intent.putExtra("startTime", time);
+                intent.putExtra("startTime", String.valueOf(time));
                 startActivity(intent);
                 return true;
             }

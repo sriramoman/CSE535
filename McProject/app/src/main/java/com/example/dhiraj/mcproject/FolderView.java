@@ -313,14 +313,14 @@ public class FolderView extends AppCompatActivity{
 
         String query = "Select Filename, latitudeStart, longitudeStart from Recording";
         Cursor cursor = db.rawQuery(query, null);
-        //Log.i("Cursor count", cursor.getCount() + " width "+ cursor.getColumnCount()+" is inside getGoogleHashMap");
-        if(cursor != null && cursor.moveToFirst()){
+        Log.i("Cursor count", cursor.getCount() + " width "+ cursor.getColumnCount()+" is inside getGoogleHashMap");
+        if(cursor != null){
             while(cursor.moveToNext()){
                 list = new ArrayList<>();
                 name = cursor.getString(cursor.getColumnIndex("Filename"));
                 lati = cursor.getInt(cursor.getColumnIndex("latitudeStart"));
                 longi = cursor.getInt(cursor.getColumnIndex("longitudeStart"));
-                //Log.i("GHM latilongi are  ", lati+" and "+longi + " is inside getGoogleHashMap");
+                Log.i("GHM latilongi are  ", lati+" and "+longi + " is inside getGoogleHashMap");
                 list.add(lati);
                 list.add(longi);
                 //Log.i("GHM list are  ", list + " is inside getGoogleHashMap");

@@ -67,7 +67,11 @@ public class MainActivity extends AppCompatActivity
 
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+
         filename = getIntent().getStringExtra("filename");
+        if(RecordService.recordingOn == 1) {
+            filename = RecordService.recordingPath;
+        }
         String[] fnames = filename.split("/");
         String fname = fnames[fnames.length-1];
         getSupportActionBar().setTitle("Record " + fname);
