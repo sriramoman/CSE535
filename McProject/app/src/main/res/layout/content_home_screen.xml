@@ -10,24 +10,27 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.dhiraj.mcproject.HomeScreen"
-    tools:showIn="@layout/activity_home_screen">
+    tools:showIn="@layout/activity_home_screen"
+    android:backgroundTintMode="screen"
+    android:background="@drawable/mictrans"
+    android:backgroundTint="#55ffffff">
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Recording"
         android:id="@+id/newRecording"
-        android:layout_alignTop="@+id/viewRecording"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="View Recordings"
         android:id="@+id/viewRecording"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignTop="@+id/newRecording"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
