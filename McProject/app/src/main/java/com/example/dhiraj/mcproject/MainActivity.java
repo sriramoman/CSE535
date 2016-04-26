@@ -18,6 +18,7 @@ import android.provider.Settings;
 
 import android.os.Bundle;
 
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
 import android.view.View;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 
-public class MainActivity extends Activity
+public class MainActivity extends AppCompatActivity
 {
     LinearLayout layout;
     VisualizerView mVisualizer;
@@ -60,21 +61,19 @@ public class MainActivity extends Activity
     String hookText;
     private String filename = "";
     int playmode = 0;
+    private String curPath;
     //</editor-fold>
     @Override
 
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         filename = getIntent().getStringExtra("filename");
-        Log.e(LOG_TAG, "filename is "+filename);
+        String[] fnames = filename.split("/");
+        String fname = fnames[fnames.length-1];
+        getSupportActionBar().setTitle("Record " + fname);
+        curPath=getIntent().getStringExtra("curFolder");
+        Log.e(LOG_TAG, "path is "+curPath);
         setContentView(R.layout.activity_main);
-        //startAlarm();
-//        code to decompress
-//        Compress compress = new Compress();
-//        boolean t = compress.unpackZip("/storage/sdcard0/Mydata/Aw/","Popo.zip");
-
-
-
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -111,6 +110,7 @@ public class MainActivity extends Activity
 //            Toast.makeText(getBaseContext(),"Service is running",Toast.LENGTH_SHORT).show();
             if(RecordService.recordingOn == 1) {
                 filename = RecordService.recordingPath;
+                starttime = RecordService.starttime;
                 startBtn.setEnabled(false);
                 stopBtn.setEnabled(true);
                 hookBtn.setEnabled(true);
@@ -130,6 +130,7 @@ public class MainActivity extends Activity
 
                 else{
                     Intent intent = new Intent(MainActivity.this, PlaybackActivity.class).putExtra("filename",filename+".drs");
+                    intent.putExtra("startTime", String.valueOf(starttime));
                     startActivity(intent);
 
                 }
@@ -187,6 +188,7 @@ public class MainActivity extends Activity
         Bundle b = new Bundle();
         String filePath = filename;
         b.putString("str1", filePath);
+        b.putString("curPath",curPath);
         Message msg = Message.obtain(null, 1);
         msg.setData(b);
         // Create and send a message to the service, using a supported 'what' value

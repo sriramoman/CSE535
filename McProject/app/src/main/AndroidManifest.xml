@@ -37,14 +37,18 @@
 
         <activity
             android:name=".HomeScreen"
-            android:label="@string/title_activity_home_screen"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:label="@string/title_activity_home_screen">
 
         </activity>
         <activity
             android:name=".FolderView"
+<<<<<<< HEAD
             android:label="Folder View"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+=======
+            android:label="Folder View" >
+            </activity>
+>>>>>>> origin/master
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
