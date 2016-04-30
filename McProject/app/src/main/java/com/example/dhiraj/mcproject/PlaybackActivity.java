@@ -565,7 +565,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         // notification is selected
         System.out.print("inside notidication class");
 //        Toast.makeText(this, "I am notifiying seeeeeeee", Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, PlaybackActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this,0,intent,0);
 
         // Build notification
