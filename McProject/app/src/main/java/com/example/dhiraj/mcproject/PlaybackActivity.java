@@ -216,6 +216,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        createNotification();
                         if (mediaPlayer.isPlaying())
                         //<editor-fold desc="Play->Pause::: Now, its playing. Toggle to pause mode">
                         {
@@ -278,6 +279,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        createNotification();
                         ArrayList<Number> candidateSeekPositions=new ArrayList<Number>();
                         for (int i=0;i<timeHooks.size();i++){
                             Number hookTime=timeHooks.get(i);
@@ -303,6 +305,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        createNotification();
                         for (int i=0;i<timeHooks.size();i++){
                             Number hookTime=timeHooks.get(i);
 //                            Log.d("Hooktime",hookTime.toString());
@@ -317,7 +320,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         //</editor-fold>
 
         setTheme();
-        createNotification();
+
         //<editor-fold desc="Load metadata">
         try {
             loadMetadata();
@@ -569,7 +572,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         // Actions are just fake
         recordingNotify = new Notification.Builder(this)
                 .setContentTitle("Intelligent recorder ")
-                .setContentText("Recording on")
+                .setContentText("Playback on")
                 .setContentIntent(pIntent)
                 .setSmallIcon(R.drawable.ic)
                 .build();
