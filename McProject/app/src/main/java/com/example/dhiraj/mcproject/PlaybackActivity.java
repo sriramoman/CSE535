@@ -1,5 +1,9 @@
 package com.example.dhiraj.mcproject;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
@@ -69,6 +73,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
     private int graphColor;
     private int highlightColor;
     private String currFolder;
+    Notification recordingNotify;
     ImageButton downloadButton;
     String downloadPath;
     @Override
@@ -312,6 +317,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         //</editor-fold>
 
         setTheme();
+        createNotification();
         //<editor-fold desc="Load metadata">
         try {
             loadMetadata();
@@ -548,6 +554,27 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
      * Called when nothing has been selected or an "un-select" has been made.
      */
     public void onNothingSelected(){
+
+    }
+
+    public void createNotification() {
+        // Prepare intent which is triggered if the
+        // notification is selected
+        System.out.print("inside notidication class");
+//        Toast.makeText(this, "I am notifiying seeeeeeee", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pIntent = PendingIntent.getActivity(this,0,intent,0);
+
+        // Build notification
+        // Actions are just fake
+        recordingNotify = new Notification.Builder(this)
+                .setContentTitle("Intelligent recorder ")
+                .setContentText("Recording on")
+                .setContentIntent(pIntent)
+                .setSmallIcon(R.drawable.ic)
+                .build();
+        NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(123, recordingNotify);
 
     }
 
