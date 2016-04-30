@@ -91,7 +91,7 @@ public class GoogleMapView extends FragmentActivity implements OnMapReadyCallbac
             lon = llMap.get(filePath).get(1);
             place = new LatLng(lat, lon);
             //i = i+5;
-            marker = mMap.addMarker(new MarkerOptions().position(place).title(fileName));
+            mMap.addMarker(new MarkerOptions().position(place).title(fileName)).showInfoWindow();
         }
 
 
@@ -134,7 +134,7 @@ public class GoogleMapView extends FragmentActivity implements OnMapReadyCallbac
                 Cursor cursor = db.rawQuery(query, null);
                 Long time = null;
                 if (cursor != null && cursor.moveToFirst()) {
-                    Log.i("Marker Path ", "cursor found somethjuing" + " ");
+                    Log.i("Marker Path ", "cursor found something" + " ");
                     time = cursor.getLong(cursor.getColumnIndex("startTime"));
                 }
                 Log.i("Marker Path ", time + " ");
