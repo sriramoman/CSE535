@@ -3,6 +3,7 @@ package com.example.dhiraj.mcproject;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -477,6 +478,9 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
     }
 
     private void stopPlayer(){
+        String ns = Context.NOTIFICATION_SERVICE;
+        NotificationManager nMgr = (NotificationManager) getApplicationContext().getSystemService(ns);
+        nMgr.cancel(123);
         mediaPlayer.stop();
         mediaPlayer.reset();
         myHandler.removeCallbacksAndMessages(null);
