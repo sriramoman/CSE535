@@ -74,6 +74,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
     private int graphColor;
     private int highlightColor;
     private String currFolder;
+    private long sttime;
     Notification recordingNotify;
     ImageButton downloadButton;
     String downloadPath;
@@ -82,7 +83,7 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playback);
         filePath = getIntent().getStringExtra("filename");
-        long sttime = Long.parseLong(getIntent().getStringExtra("startTime"));
+        sttime = Long.parseLong(getIntent().getStringExtra("startTime"));
         Calendar time = Calendar.getInstance();
         time.setTimeInMillis(sttime);
         recordStartTime=time.get(Calendar.HOUR_OF_DAY);
@@ -280,7 +281,6 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        createNotification();
                         ArrayList<Number> candidateSeekPositions=new ArrayList<Number>();
                         for (int i=0;i<timeHooks.size();i++){
                             Number hookTime=timeHooks.get(i);
@@ -306,7 +306,6 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        createNotification();
                         for (int i=0;i<timeHooks.size();i++){
                             Number hookTime=timeHooks.get(i);
 //                            Log.d("Hooktime",hookTime.toString());
@@ -569,7 +568,10 @@ public class PlaybackActivity extends AppCompatActivity implements OnChartValueS
         // notification is selected
         System.out.print("inside notidication class");
 //        Toast.makeText(this, "I am notifiying seeeeeeee", Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(this, PlaybackActivity.class);
+        //Intent intent = new Intent(this, PlaybackActivity.class);
+        Intent intent = getIntent();
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        //startActivity(intent);
         PendingIntent pIntent = PendingIntent.getActivity(this,0,intent,0);
 
         // Build notification

@@ -66,12 +66,12 @@ public class GoogleMapView extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        LatLng place = new LatLng(30,-100);
-        Marker marker;
-
         String filePath = null;
         String fileName = null;
+        Marker marker;
+
+        LatLng place;// = new LatLng(33.420930,-111.920466);
+
         int pos;
         double lat=10.0;
         double lon=10.0;
