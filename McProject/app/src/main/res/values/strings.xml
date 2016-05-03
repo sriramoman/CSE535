@@ -2,7 +2,7 @@
     <string name="app_name">Mc Project</string>
     <string name="title_activity_home_screen">Dashboard</string>
     <string name="title_activity_google_map_view">Map</string>
-    <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_login">Intelligent Voice Recorder</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
