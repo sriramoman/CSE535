@@ -45,9 +45,9 @@ public class HomeScreen extends AppCompatActivity {
                                     @Override
                                     public void onChosenDir(String chosenDir) {
                                         m_chosenDir = chosenDir;
-                                       /* Toast.makeText(
-                                                MainActivity.this, "Chosen directory: " +
-                                                        chosenDir, Toast.LENGTH_LONG).show();*/
+                                        Toast.makeText(
+                                                HomeScreen.this, "Chosen directory: " +
+                                                        chosenDir, Toast.LENGTH_LONG).show();
                                         askFilename();
 //                                        Toast.makeText(
 //                                                HomeScreen.this, "Chosen directory + file: " +

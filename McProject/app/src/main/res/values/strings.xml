@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mc Project</string>
+    <string name="app_name">Intelligent Voice Recorder</string>
     <string name="title_activity_home_screen">Dashboard</string>
     <string name="title_activity_google_map_view">Map</string>
     <string name="title_activity_login">Intelligent Voice Recorder</string>
